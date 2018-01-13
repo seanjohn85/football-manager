@@ -1,0 +1,35 @@
+{
+    "name": "football-manager",
+    "version": "1.0.0",
+    "description": "A Football Manager game bulit using JS ES6 OOP with a mongo database ",
+    "main": "server.js",
+    "dependencies": {
+        "express": "^4.16.2",
+        "kurento-client": "^6.6.0",
+        "mongodb": "^2.2.33",
+        "node-fetch": "^1.7.3",
+        "ws": "^3.0.0"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "node server"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/seanjohn85/football-manager.git"
+    },
+    "keywords": [
+        "FootBall",
+        "Manager",
+        "Javascript",
+        "Game.",
+        "OOP",
+        "MangoDB"
+    ],
+    "author": "John Kenny",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/seanjohn85/football-manager/issues"
+    },
+    "homepage": "https://github.com/seanjohn85/football-manager#readme"
+}
