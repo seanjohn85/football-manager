@@ -75,8 +75,9 @@ app.use(bodyparser.json());
 // connect to the db and start the express server
 let db;
 
-// ***Replace the URL below with the URL for your database***
+// URL for Mongo database
 const url =  "mongodb://localhost:27017/data";
+//connects to the mongo db (db needs to be running)
 MongoClient.connect(url, (err, database) => {
   if(err) {
     return console.log(err);
@@ -88,7 +89,7 @@ MongoClient.connect(url, (err, database) => {
   });
 });
 
-// serve the homepage
+// serve the homepage from the public directory
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
@@ -98,6 +99,7 @@ app.get('/', (req, res) => {
 app.post('/start', (req, res) => {
 console.log('Data received: ' + req.body.username);
 
+  //increments the game counter
   gameCounter ++;
   //create a new game object to add to the db
   let newGame = {};
@@ -115,10 +117,22 @@ console.log('Data received: ' + req.body.username);
       return console.log(err);
     }
     console.log('new Game Created');
-    //res.redirect('/');
+    //sends the name of the game back to the user
     res.send(req.body.username + gameCounter);
   });
 });
+// get the click data from the database
+app.post('/end', (req, res) => {
+
+
+  db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
+    if (err) return console.log(err);
+    res.send(result);
+  });
+});
+
+
+
 // get the click data from the database
 app.get('/clicks', (req, res) => {
 
