@@ -1,0 +1,10 @@
+@font-face {
+font-family: PremierLeague;
+src: url(/Barclays Premier League.ttf);
+}
+
+body {
+  font-family: PremierLeague, Helvetica, Arial, sans-serif;
+  background-color: #00ff95;
+  color: #38013a;
+}

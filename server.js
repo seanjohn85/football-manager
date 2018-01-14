@@ -9,8 +9,11 @@ let teams = [];
 gameData.teams = [];
 for (i in gameJSON.teams){
   let team = [gameJSON.teams[i]];
+  team.points = 0;
+  team.w = 0;
+  team.l
   teams.push(gameJSON.teams[i].name);
-  /*let players = [];
+  let players = [];
   //gameData.team = [gameJSON.teams[i]];
   for (y in gameJSON.players){
     if (gameJSON.players[y].team_code == gameJSON.teams[i].code){
@@ -27,7 +30,7 @@ for (i in gameJSON.teams){
       team.push(gameJSON.players[y]);
       console.log(gameJSON.teams[i].code);
     }
-  }*/
+  }
   gameData.teams.push(team);
   console.log("here")
 }
@@ -93,10 +96,11 @@ app.get('/', (req, res) => {
 
 // add a document to the DB collection recording the click event
 app.post('/clicked', (req, res) => {
+console.log('Data received: ' + JSON.stringify(req.body));
+
   const click = {clickTime: new Date()};
   let newGame = {};
   newGame.fixtuers = [];
-
   newGame.fixtuers.push(fixtureGenerator());
   newGame.teamData = [];
   newGame.teamData.push(gameData);
