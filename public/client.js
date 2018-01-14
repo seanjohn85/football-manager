@@ -1,10 +1,16 @@
-console.log('Client-side code running');
 
+console.log('Client-side code running');
+//to hold the name of this users game
+let gameName;
+//consts for html elementes
 const username = document.getElementById('username');
 const button = document.getElementById('startGame');
+
+//sartgame button click handle event
 button.addEventListener('click', function(e) {
   console.log(username.value);
-  fetch('/clicked', {method: 'POST',
+  //
+  fetch('/start', {method: 'POST',
     body: JSON.stringify({username: username.value}),
     headers: {
       Accept: 'application/json',
@@ -12,11 +18,13 @@ button.addEventListener('click', function(e) {
     }
 })
     .then(function(response) {
-      if(response.ok) {
-        console.log('click was recorded');
-        return;
-      }
+      if(response.ok) return response.json();
       throw new Error('Request failed.');
+    })
+    .then(function(data) {
+      console.log(data);
+      gameName = data;
+      console.log(gameName);
     })
     .catch(function(error) {
       console.log(error);

@@ -11,9 +11,10 @@ let teams = [];
 gameData.teams = [];
 for (i in gameJSON.teams){
   let team = [gameJSON.teams[i]];
-  team.points = 0;
-  team.w = 0;
-  team.l
+
+  team.scored = 0;
+  gameJSON.teams[i].goals_conceded = 0;
+  team.played = 0;
   teams.push(gameJSON.teams[i].name);
   let players = [];
   //gameData.team = [gameJSON.teams[i]];
@@ -30,14 +31,12 @@ for (i in gameJSON.teams){
       gameJSON.players[y].red_cards = 0;
       gameJSON.players[y].saves = 0;
       team.push(gameJSON.players[y]);
-      console.log(gameJSON.teams[i].code);
+      //console.log(gameJSON.teams[i].code);
     }
   }
   gameData.teams.push(team);
-  console.log("here")
+  //console.log("here")
 }
-
-
 
 //this function is used to genertate fixures using round robin for a new game
 function fixtureGenerator(){
@@ -96,19 +95,19 @@ app.get('/', (req, res) => {
 
 
 // add a document to the DB collection recording the click event
-app.post('/clicked', (req, res) => {
+app.post('/start', (req, res) => {
 console.log('Data received: ' + req.body.username);
 
   gameCounter ++;
-  const click = {clickTime: new Date()};
+  //create a new game object to add to the db
   let newGame = {};
-  newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
-                  date : new Date(), gameNo : gameCounter};
+  newGame.user = req.body.username + gameCounter;
+  //newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
+            //      date : new Date(), gameNo : gameCounter};
   newGame.fixtuers = [];
   newGame.fixtuers.push(fixtureGenerator());
   newGame.teamData = [];
   newGame.teamData.push(gameData);
-  console.log(click);
   console.log(db);
 
   db.collection('testGames').save(newGame, (err, result) => {
@@ -116,7 +115,8 @@ console.log('Data received: ' + req.body.username);
       return console.log(err);
     }
     console.log('new Game Created');
-    res.redirect('/');
+    //res.redirect('/');
+    res.send(req.body.username + gameCounter);
   });
 });
 // get the click data from the database
