@@ -3,6 +3,8 @@ const gameJSON = require('./JSON/football.json');
 const robin = require('roundrobin');
 //adds shuffle array modele
 const shuffle = require('shuffle-array');
+
+const bodyparser = require('body-parser');
 //console.log(parsedJSON);
 let gameData = {};
 let teams = [];
@@ -37,10 +39,6 @@ for (i in gameJSON.teams){
 
 
 
-
-
-//fixtureGenerator();
-
 //this function is used to genertate fixures using round robin for a new game
 function fixtureGenerator(){
 
@@ -61,7 +59,7 @@ function fixtureGenerator(){
 
 //console.log(gameData);
 
-let gameConter
+let gameCounter = 0;
 
 console.log('Server-side code running');
 
@@ -71,6 +69,9 @@ const app = express();
 
 // serve files from the public directory
 app.use(express.static('public'));
+
+// needed to parse JSON data in the body of POST requests
+app.use(bodyparser.json());
 
 // connect to the db and start the express server
 let db;
@@ -96,10 +97,13 @@ app.get('/', (req, res) => {
 
 // add a document to the DB collection recording the click event
 app.post('/clicked', (req, res) => {
-console.log('Data received: ' + JSON.stringify(req.body));
+console.log('Data received: ' + req.body.username);
 
+  gameCounter ++;
   const click = {clickTime: new Date()};
   let newGame = {};
+  newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
+                  date : new Date(), gameNo : gameCounter};
   newGame.fixtuers = [];
   newGame.fixtuers.push(fixtureGenerator());
   newGame.teamData = [];

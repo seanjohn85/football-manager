@@ -4,12 +4,13 @@ const username = document.getElementById('username');
 const button = document.getElementById('startGame');
 button.addEventListener('click', function(e) {
   console.log(username.value);
-  fetch('/clicked', {method: 'POST', 
-    body: JSON.stringify({x: "john"}),
+  fetch('/clicked', {method: 'POST',
+    body: JSON.stringify({username: username.value}),
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
-} })
+    }
+})
     .then(function(response) {
       if(response.ok) {
         console.log('click was recorded');
@@ -30,7 +31,7 @@ setInterval(function() {
       throw new Error('Request failed.');
     })
     .then(function(data) {
-      document.getElementById('counter').innerHTML = `Button was clicked ${data.length} times`;
+      document.getElementById('counter').innerHTML = `There are  ${data.length} games created`;
     })
     .catch(function(error) {
       console.log(error);
