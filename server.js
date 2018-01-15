@@ -8,13 +8,17 @@ const bodyparser = require('body-parser');
 //console.log(parsedJSON);
 let gameData = {};
 let teams = [];
+let clubs = [];
+
 gameData.teams = [];
 for (i in gameJSON.teams){
   let team = [gameJSON.teams[i]];
-
+   clubs.push(team);
   team.scored = 0;
   gameJSON.teams[i].goals_conceded = 0;
   team.played = 0;
+
+
   teams.push(gameJSON.teams[i].name);
   let players = [];
   //gameData.team = [gameJSON.teams[i]];
@@ -38,6 +42,10 @@ for (i in gameJSON.teams){
   //console.log("here")
 }
 
+///console.log(gameJSON.teams);
+
+//console.log(clubs);
+
 //this function is used to genertate fixures using round robin for a new game
 function fixtureGenerator(){
 
@@ -53,6 +61,7 @@ function fixtureGenerator(){
   }
 
   return shuffle(fixtuers);
+
 }
 
 
@@ -99,6 +108,8 @@ app.get('/', (req, res) => {
 app.post('/start', (req, res) => {
 console.log('Data received: ' + req.body.username);
 
+
+
   //increments the game counter
   gameCounter ++;
   //create a new game object to add to the db
@@ -106,8 +117,12 @@ console.log('Data received: ' + req.body.username);
   newGame.user = req.body.username + gameCounter;
   //newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
             //      date : new Date(), gameNo : gameCounter};
-  newGame.fixtuers = [];
-  newGame.fixtuers.push(fixtureGenerator());
+  let fixt = fixtureGenerator();
+  newGame.fixtures = [];
+  for (i in fixt){
+    console.log(fixt[i]);
+    newGame.fixtures.push(fixt[i]);
+  }
   newGame.teamData = [];
   newGame.teamData.push(gameData);
   console.log(db);
@@ -126,11 +141,27 @@ console.log('Data received: ' + req.body.username);
 // get the click data from the database
 app.post('/end', (req, res) => {
 
-
-  db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
-    if (err) return console.log(err);
-    res.send(result);
+console.log('end');
+/*for (i in gameJSON.teams){
+  db.collection('teams').save(gameJSON.teams[i], (err, result) => {
+    if (err) {
+      return console.log(err);
+    }
   });
+}*/
+
+/*for (i in gameJSON.players){
+  db.collection('players').save(gameJSON.players[i], (err, result) => {
+    if (err) {
+      return console.log(err);
+    }
+  });
+}*/
+
+  // db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
+  //   if (err) return console.log(err);
+  //   res.send(result);
+  // });
 });
 
 
@@ -140,7 +171,7 @@ app.get('/clicks', (req, res) => {
 
   db.collection('testGames').find().toArray((err, result) => {
     if (err) return console.log(err);
-    console.log(result);
+    //console.log(result);
     res.send(result);
   });
 });
