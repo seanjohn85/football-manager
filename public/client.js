@@ -1,14 +1,14 @@
 
 console.log('Client-side code running');
 //to hold the name of this users game
-let gameName = "test1231";
+let gameName;
 //consts for html elementes
 const username = document.getElementById('username');
 const startBtn = document.getElementById('startGame');
 const quitBtn = document.getElementById('endGame');
 //sartgame button click handle event
 startBtn.addEventListener('click', function(e) {
-  console.log(username.value);
+  //console.log(username.value);
   // sends a post method to start a game with the username from the input box
   fetch('/start', {method: 'POST',
     body: JSON.stringify({username: username.value}),
@@ -24,19 +24,22 @@ startBtn.addEventListener('click', function(e) {
     })
     //sets the game name from the json response
     .then(function(data) {
-      console.log(data);
-      gameName = data;
-      console.log(gameName);
+       console.log("data recieved");
+       console.log(data.game);
+       gameName = data.game;
+      // x = data;
+      // console.log(x);
     })
     //catches errors
     .catch(function(error) {
       console.log(error);
     });
     startBtn.disabled = true;
+
 });
 
 quitBtn.addEventListener('click', function(e) {
-  console.log(gameName);
+  //console.log(x);
   fetch('/end', {method: 'POST',
     body: JSON.stringify({game: gameName}),
     headers: {
@@ -44,14 +47,14 @@ quitBtn.addEventListener('click', function(e) {
       'Content-Type': 'application/json'
     }
   })
-  //handles server response
-    .then(function(response) {
-      if(response.ok) return response.json();
-      throw new Error('Request failed.');
-    })
+  .then(function(response) {
+
+     return response.json();
+   })
+
     //sets the game name from the json response
     .then(function(data) {
-      console.log(data);
+      console.log("here");
     })
     //catches errors
     .catch(function(error) {

@@ -117,8 +117,10 @@ console.log('Data received: ' + req.body.username);
       return console.log(err);
     }
     console.log('new Game Created');
+    let x = {game: req.body.username + gameCounter};
     //sends the name of the game back to the user
-    res.send(req.body.username + gameCounter);
+    res.send(x);
+
   });
 });
 // get the click data from the database
@@ -138,6 +140,7 @@ app.get('/clicks', (req, res) => {
 
   db.collection('testGames').find().toArray((err, result) => {
     if (err) return console.log(err);
+    console.log(result);
     res.send(result);
   });
 });
