@@ -1,6 +1,6 @@
 @font-face {
 font-family: PremierLeague;
-src: url(/Barclays Premier League.ttf);
+src: url(bootstrap/fonts/Barclays Premier League.ttf);
 }
 
 /* set the font and colors of the page */
@@ -35,4 +35,33 @@ body {
   color: #00ff95;
   background-color: #3d195b;
   border: none;
+}
+
+
+
+.selectTeam > div {
+  margin-bottom: 20px;
+
+}
+
+.selectTeam > div > button{
+
+  margin: 10px;
+  background-color: #e5e5e5;
+  padding-bottom: 20px;
+  border-radius: 15px;
+}
+.selectTeam > div > button > img{
+  padding: 20px;
+}
+
+.selectTeam > div > button > p{
+  background-color: #ff015b;
+  width: 100%;
+  font-size: 20px;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+
 }

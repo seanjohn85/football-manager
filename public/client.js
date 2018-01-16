@@ -1,6 +1,14 @@
 
 console.log('Client-side code running');
 
+
+$('#hide').hide();
+$('#messages').hide();
+$('#selectTeam').hide();
+const selectTeam = document.getElementById('selectTeam');
+
+
+
 class Team{
   constructor(code, name, attackHome, attackAway, defHome, defAway, points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0){
     this.code = code;
@@ -21,14 +29,18 @@ class Team{
     console.log(`code: ${this.code} name: ${this.name}`);
   }
   getCrest(){
-    return ``;
+    return `images/${this.code}/crest.png`;
+
+  }
+  getName(){
+    return this.name;
 
   }
 
 }
 
 //holds all teams
-let teams;
+let clubs = [];
 
 
 
@@ -49,8 +61,12 @@ let gameName;
 let user;
 //consts for html elementes
 const username = document.getElementById('username');
+
 const startBtn = document.getElementById('startGame');
 const quitBtn = document.getElementById('endGame');
+
+
+const messageBorad = document.getElementById('messages');
 //sartgame button click handle event
 startBtn.addEventListener('click', function(e) {
   //console.log(username.value);
@@ -69,6 +85,11 @@ startBtn.addEventListener('click', function(e) {
     })
     //sets the game name from the json response
     .then(function(data) {
+
+      $('#startscreen').hide();
+      $('#messages').show();
+      messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${username.value}`;
+      messageBorad.getElementsByTagName("p")[0].innerHTML = `Please Select your team`;
        console.log("data recieved");
        console.log(data.game);
        //console.log(data.teams);
@@ -115,7 +136,7 @@ quitBtn.addEventListener('click', function(e) {
 });
 
 //checks the server at interval points
-setInterval(function() {
+/*setInterval(function() {
   fetch('/clicks', {method: 'GET'})
     .then(function(response) {
       if(response.ok) return response.json();
@@ -127,7 +148,7 @@ setInterval(function() {
     .catch(function(error) {
       console.log(error);
     });
-}, 1000);
+}, 1000);*/
 
 
 //create all the team objects and add them to the teams array
@@ -138,19 +159,27 @@ function addTeams(teams){
     let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
     //add the new team to teams array
-    teams.push(newTeam);
+    clubs.push(newTeam);
     newTeam.print();
   }
-  selectTeam();
+  selectTeamMenu();
 }
 //create the new teams menu
 function selectTeamMenu(){
+  console.log("here" + clubs.length);
+  for (t in clubs){
+    let te = clubs[t];
+    console.log(clubs[t].getName());
+    $( ".selectTeam" ).append( `<div  class = 'selector col-lg-3 col-md-3'> <button onclick="myTeamIs('${clubs[t].getName()}', '${clubs[t].getCrest()}')"  data-toggle="modal" data-target="#teamModal">
+     <img src="${clubs[t].getCrest()}" class="img-responsive">
+     <p> ${clubs[t].getName()} </p>
+     </button></div>` );
 
+  }
+  $('#selectTeam').show();
 }
-
-
-
-
-
-
-$('#hide').hide();
+function myTeamIs(selectedTeam, selectedCrest) {
+  console.log(selectedTeam);
+  //alert(`team is ${selectedTeam} `)
+  document.getElementById('teamconfirm').innerHTML = `You have selected ${selectedTeam}`;
+}
