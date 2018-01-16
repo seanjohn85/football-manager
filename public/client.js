@@ -27,8 +27,7 @@ class Team{
 
 }
 
-
-
+//holds all teams
 let teams;
 
 
@@ -131,15 +130,27 @@ setInterval(function() {
 }, 1000);
 
 
-
+//create all the team objects and add them to the teams array
 function addTeams(teams){
-
+  //loop through team data from db
   for (t in teams){
-    //console.log(teams[t].name);
+    //create a new team object
     let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
+    //add the new team to teams array
     teams.push(newTeam);
     newTeam.print();
   }
+  selectTeam();
+}
+//create the new teams menu
+function selectTeamMenu(){
 
 }
+
+
+
+
+
+
+$('#hide').hide();
