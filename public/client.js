@@ -1,7 +1,53 @@
 
 console.log('Client-side code running');
+
+class Team{
+  constructor(code, name, attackHome, attackAway, defHome, defAway, points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0){
+    this.code = code;
+    this.name = name;
+    this.attackHome = attackHome;
+    this.attackAway = attackAway;
+    this.defHome = defHome;
+    this.defAway = defAway;
+    this.points = points;
+    this.w = w;
+    this.l = l;
+    this.d = d;
+    this.scored = scored;
+    this.conceeded = conceeded;
+  }
+
+  print(){
+    console.log(`code: ${this.code} name: ${this.name}`);
+  }
+  getCrest(){
+    return ``;
+
+  }
+
+}
+
+
+
+let teams;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //to hold the name of this users game
 let gameName;
+
+let user;
 //consts for html elementes
 const username = document.getElementById('username');
 const startBtn = document.getElementById('startGame');
@@ -26,6 +72,12 @@ startBtn.addEventListener('click', function(e) {
     .then(function(data) {
        console.log("data recieved");
        console.log(data.game);
+       //console.log(data.teams);
+       addTeams(data.teams)
+       //console.log(data.teams);
+
+
+       user = username.value;
        gameName = data.game;
       // x = data;
       // console.log(x);
@@ -77,3 +129,17 @@ setInterval(function() {
       console.log(error);
     });
 }, 1000);
+
+
+
+function addTeams(teams){
+
+  for (t in teams){
+    //console.log(teams[t].name);
+    let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
+      teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
+    teams.push(newTeam);
+    newTeam.print();
+  }
+
+}

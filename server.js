@@ -3,12 +3,14 @@ const gameJSON = require('./JSON/football.json');
 const robin = require('roundrobin');
 //adds shuffle array modele
 const shuffle = require('shuffle-array');
-
+//model to pharse json requests
 const bodyparser = require('body-parser');
 //console.log(parsedJSON);
 let gameData = {};
 let teams = [];
 let clubs = [];
+
+const setUp = {points: 0, w: 0, l: 0, d: 0, scored: 0, conceeded: 0};
 
 gameData.teams = [];
 for (i in gameJSON.teams){
@@ -104,40 +106,58 @@ app.get('/', (req, res) => {
 });
 
 
-// add a document to the DB collection recording the click event
+/*
+This fuction is triggered when a user creates a new games
+the user game is sent to the server and a new game is created in the db
+once the new game is created a response is send to the user with a list of teams
+*/
 app.post('/start', (req, res) => {
 console.log('Data received: ' + req.body.username);
-
-
-
   //increments the game counter
   gameCounter ++;
   //create a new game object to add to the db
   let newGame = {};
-  newGame.user = req.body.username + gameCounter;
+  //sets a unique game name
+  newGame.game = req.body.username + gameCounter;
+  //sets the palyers name
+  newGame.user = req.body.username;
+
   //newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
             //      date : new Date(), gameNo : gameCounter};
+  //let to hold fixtures
   let fixt = fixtureGenerator();
-  newGame.fixtures = [];
+  //loop through the fitures and separte thame into weeks
   for (i in fixt){
     console.log(fixt[i]);
-    newGame.fixtures.push(fixt[i]);
+    let no = parseInt(i) +1;
+    newGame["week" + no] = fixt[i];
+  }
+  for (i in teams){
+
+    newGame[teams[i]] = setUp;
   }
   newGame.teamData = [];
   newGame.teamData.push(gameData);
   console.log(db);
-
+  //save the newGame data to the database
   db.collection('testGames').save(newGame, (err, result) => {
     if (err) {
       return console.log(err);
     }
+    //array that will be used to house the response data
+    let data = {game: req.body.username + gameCounter};
     console.log('new Game Created');
-    let x = {game: req.body.username + gameCounter};
-    //sends the name of the game back to the user
-    res.send(x);
-
+    //gets all the teams from the database and returns data to the user
+    db.collection('teams').find().toArray((err, teams) => {
+      if (err) return console.log(err);
+      data.teams = teams;
+      //sends the gamename and team data back to the user
+      res.send(data);
+    });
   });
 });
+
+
 // get the click data from the database
 app.post('/end', (req, res) => {
 
