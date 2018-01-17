@@ -11,7 +11,7 @@ const selectTeam = document.getElementById('selectTeam');
 
 //class used to create Team objects
 class Team{
-  //used to set class instance varaibles 
+  //used to set class instance varaibles
   constructor(code, name, attackHome, attackAway, defHome, defAway, points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0){
     this.code = code;
     this.name = name;
@@ -30,10 +30,12 @@ class Team{
   print(){
     console.log(`code: ${this.code} name: ${this.name}`);
   }
+  //gets the teams crest image from the images folder and team directory
   getCrest(){
     return `images/${this.code}/crest.png`;
 
   }
+  //returns the name of the team
   getName(){
     return this.name;
   }
@@ -41,11 +43,8 @@ class Team{
 
 //holds all teams
 let clubs = [];
-
-
+//sets the users team
 let userTeam;
-
-
 //to hold the name of this users game
 let gameName;
 
@@ -120,6 +119,7 @@ quitBtn.addEventListener('click', function(e) {
     .catch(function(error) {
       console.log(error);
     });
+    //disables button to prevent multiple server requests
     startBtn.disabled = false;
 });
 

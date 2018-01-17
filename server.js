@@ -9,7 +9,7 @@ const bodyparser = require('body-parser');
 let gameData = {};
 let teams = [];
 let clubs = [];
-
+//to be deleted
 const setUp = {points: 0, w: 0, l: 0, d: 0, scored: 0, conceeded: 0};
 
 gameData.teams = [];
@@ -40,6 +40,7 @@ for (i in gameJSON.teams){
       //console.log(gameJSON.teams[i].code);
     }
   }
+  team.players = players;
   gameData.teams.push(team);
   //console.log("here")
 }
@@ -125,13 +126,7 @@ console.log('Data received: ' + req.body.username);
   //newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
             //      date : new Date(), gameNo : gameCounter};
   //let to hold fixtures
-  let fixt = fixtureGenerator();
-  //loop through the fitures and separte thame into weeks
-  for (i in fixt){
-    console.log(fixt[i]);
-    let no = parseInt(i) +1;
-    newGame["week" + no] = fixt[i];
-  }
+  newGame.fixtures = fixtureGenerator();
   for (i in teams){
 
     newGame[teams[i]] = setUp;
@@ -186,6 +181,12 @@ console.log('end');
 
 
 app.post('/selectedteam', (req, res) => {
+
+  //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
+
+  //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
+
+
   console.log("update here");
   db.collection('testGames').update({game : req.body.game}, { $addToSet: { userTeam: req.body.userTeam} }, (err, result) => {
     if (err) return console.log(err);
