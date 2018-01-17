@@ -13,7 +13,7 @@ const selectTeam = document.getElementById('selectTeam');
 class Team{
   //used to set class instance varaibles
   constructor(code, name, attackHome, attackAway, defHome, defAway,
-     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0) {
+     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, players = []) {
     this.code = code;
     this.name = name;
     this.attackHome = attackHome;
@@ -26,9 +26,8 @@ class Team{
     this.d = d;
     this.scored = scored;
     this.conceeded = conceeded;
-
+    this.players = players;
   }
-
   print(){
     console.log(`code: ${this.code} name: ${this.name}`);
   }
@@ -41,12 +40,18 @@ class Team{
   getName(){
     return this.name;
   }
-}
+  addPlayer(player){
+    player.printName();
+    this.players.push(player);
 
+  }
+}
+//class used to create player objects
 class Player{
+  //used to create player objects
   constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
-   goals_scored, goals_conceded, yellow_cards, red_cards, influence, creativity, threat,
- cost, ict_index, minutes){
+   goals_scored, clean_sheets, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+   cost, ict_index, minutes){
     this.team_code = team_code;
     this.code = code;
     this.web_name = web_name;
@@ -67,9 +72,13 @@ class Player{
     this.ict_index = ict_index;
     this.minutes = minutes;
   }
+
   getImage(){
     return `images/${this.team_code}/${this.code}.png`;
+  }
 
+  printName(){
+    console.log(`my name is ${this.web_name}`);
   }
 }
 
@@ -127,8 +136,8 @@ startBtn.addEventListener('click', function(e) {
     //prevents multiple server requests
     startBtn.disabled = true;
 });
-//used to delete the game from the db if a user quits
 
+//used to delete the game from the db if a user quits
 quitBtn.addEventListener('click', function(e) {
   //send a server post request to end with the gameName to be deleted in the request body
   fetch('/end', {method: 'POST',
@@ -173,14 +182,30 @@ quitBtn.addEventListener('click', function(e) {
 
 //create all the team objects and add them to the teams array
 function addTeams(teams){
+  console.log(teams);
   //loop through team data from db
   for (t in teams){
+    console.log(teams[t].players);
+
     //create a new team object
     let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
+      for (player in teams[t].players){
+        teams[t].players[player]
+        let p = new Player(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
+          teams[t].players[player].first_name, teams[t].players[player].second_name, teams[t].players[player].squad_number,
+          teams[t].players[player].assists, teams[t].players[player].goals_scored, teams[t].players[player].clean_sheets,
+          teams[t].players[player].goals_conceded, teams[t].players[player].own_goals,
+          teams[t].players[player].yellow_cards, teams[t].players[player].red_cards, teams[t].players[player].influence,
+          teams[t].players[player].creativity, teams[t].players[player].threat, teams[t].players[player].cost,
+          teams[t].players[player].ict_index, teams[t].players[player].minutes)
+
+          newTeam.addPlayer(p);
+      }
+
     //add the new team to teams array
     clubs.push(newTeam);
-    newTeam.print();
+    //newTeam.print();
   }
   selectTeamMenu();
 }

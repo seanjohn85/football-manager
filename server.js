@@ -38,6 +38,11 @@ for (i in gameJSON.teams){
       gameJSON.players[y].yellow_cards = 0;
       gameJSON.players[y].red_cards = 0;
       gameJSON.players[y].saves = 0;
+      //insures player has an impact on the game, 0 is no impact
+      if (gameJSON.players[y].ict_index < 30.0){
+        gameJSON.players[y].ict_index = 30.1;
+
+      }
       //adds player to players array
       players.push(gameJSON.players[y]);
       //console.log(gameJSON.teams[i].code);
@@ -138,20 +143,43 @@ console.log('Data received: ' + req.body.username);
   //newGame.push(teamData);
   console.log(db);
   //save the newGame data to the database
-  db.collection('testGames').save(newGame, (err, result) => {
+  db.collection('singlePalyerGames').save(newGame, (err, result) => {
     if (err) {
       return console.log(err);
     }
     //array that will be used to house the response data
-    let data = {game: req.body.username + gameCounter};
+    let named = req.body.username + gameCounter;
+    let data = {game: named};
     console.log('new Game Created');
+
     //gets all the teams from the database and returns data to the user
-    db.collection('teams').find().toArray((err, teams) => {
+    /*db.collection('teams').find().toArray((err, teams) => {
       if (err) return console.log(err);
       data.teams = teams;
       //sends the gamename and team data back to the user
       res.send(data);
+    });*/
+    db.collection('singlePalyerGames').find({game: named}).toArray((err, teams) => {
+      if (err) return console.log(err);
+      data.teams = teams[0].teamData;
+      console.log(teams[0].teamData);
+      //sends the gamename and team data back to the user
+      res.send(data);
+
     });
+    /*db.collection('teams').find().toArray((err, teams) => {
+      if (err) return console.log(err);
+      data.teams = teams;
+      //sends the gamename and team data back to the user
+      res.send(data);
+    });*/
+    /*db.collection('testGames').find().toArray((err, teams) => {
+      if (err) return console.log(err);
+      console.log(data.teams);
+      //data.teams = teams;
+      //sends the gamename and team data back to the user
+      res.send(data);
+    });*/
   });
 });
 
@@ -176,7 +204,7 @@ console.log('end');
   });
 }*/
 
-  db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
+  db.collection('singlePalyerGames').deleteOne({user : req.body.game}, (err, result) => {
     if (err) return console.log(err);
     res.send(result);
   });
@@ -185,12 +213,15 @@ console.log('end');
 
 app.post('/selectedteam', (req, res) => {
 
+
+
   //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
 
   //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
 
   console.log("update here");
-  db.collection('testGames').update({game : req.body.game}, { $addToSet: { userTeam: req.body.userTeam} }, (err, result) => {
+
+  db.collection('singlePalyerGames').update({game : req.body.game}, { $addToSet: {userTeam: req.body.userTeam}}, (err, result) => {
     if (err) return console.log(err);
     //console.log(result);
     res.send(result);
