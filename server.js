@@ -1,3 +1,4 @@
+//imports json of players and teams
 const gameJSON = require('./JSON/football.json');
 //adds roundrobin module
 const robin = require('roundrobin');
@@ -6,22 +7,23 @@ const shuffle = require('shuffle-array');
 //model to pharse json requests
 const bodyparser = require('body-parser');
 //console.log(parsedJSON);
-let gameData = {};
+let teamData = {};
 let teams = [];
-let clubs = [];
-//to be deleted
-const setUp = {points: 0, w: 0, l: 0, d: 0, scored: 0, conceeded: 0};
 
-gameData.teams = [];
+
+//loops through the json file and creates array of teams and
 for (i in gameJSON.teams){
-  let team = [gameJSON.teams[i]];
-   clubs.push(team);
-  team.scored = 0;
+
   gameJSON.teams[i].goals_conceded = 0;
-  team.played = 0;
-
-
+  gameJSON.teams[i].goals_scored = 0;
+  gameJSON.teams[i].played = 0;
+  gameJSON.teams[i].points = 0;
+  gameJSON.teams[i].won = 0;
+  gameJSON.teams[i].lost = 0;
+  gameJSON.teams[i].draw = 0;
+  //creates array of teams for fixture gen to create fixures
   teams.push(gameJSON.teams[i].name);
+  //array to hold players of a team
   let players = [];
   //gameData.team = [gameJSON.teams[i]];
   for (y in gameJSON.players){
@@ -36,18 +38,17 @@ for (i in gameJSON.teams){
       gameJSON.players[y].yellow_cards = 0;
       gameJSON.players[y].red_cards = 0;
       gameJSON.players[y].saves = 0;
-      team.push(gameJSON.players[y]);
+      //adds player to players array
+      players.push(gameJSON.players[y]);
       //console.log(gameJSON.teams[i].code);
     }
   }
-  team.players = players;
-  gameData.teams.push(team);
+  gameJSON.teams[i].players = players;
+  //adds team to the teamData array
+  teamData[gameJSON.teams[i].name] = gameJSON.teams[i];
   //console.log("here")
 }
 
-///console.log(gameJSON.teams);
-
-//console.log(clubs);
 
 //this function is used to genertate fixures using round robin for a new game
 function fixtureGenerator(){
@@ -117,8 +118,9 @@ console.log('Data received: ' + req.body.username);
   //increments the game counter
   gameCounter ++;
   //create a new game object to add to the db
-  let newGame = {};
+  let newGame = {teamData};
   //sets a unique game name
+
   newGame.game = req.body.username + gameCounter;
   //sets the palyers name
   newGame.user = req.body.username;
@@ -127,12 +129,13 @@ console.log('Data received: ' + req.body.username);
             //      date : new Date(), gameNo : gameCounter};
   //let to hold fixtures
   newGame.fixtures = fixtureGenerator();
-  for (i in teams){
+  /*for (i in teams){
 
     newGame[teams[i]] = setUp;
-  }
-  newGame.teamData = [];
-  newGame.teamData.push(gameData);
+  }*/
+  //newGame.teamData = [];
+  //newGame.teamData = [gameData];
+  //newGame.push(teamData);
   console.log(db);
   //save the newGame data to the database
   db.collection('testGames').save(newGame, (err, result) => {
@@ -185,7 +188,6 @@ app.post('/selectedteam', (req, res) => {
   //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
 
   //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
-
 
   console.log("update here");
   db.collection('testGames').update({game : req.body.game}, { $addToSet: { userTeam: req.body.userTeam} }, (err, result) => {

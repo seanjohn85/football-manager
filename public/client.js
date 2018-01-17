@@ -12,7 +12,8 @@ const selectTeam = document.getElementById('selectTeam');
 //class used to create Team objects
 class Team{
   //used to set class instance varaibles
-  constructor(code, name, attackHome, attackAway, defHome, defAway, points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0){
+  constructor(code, name, attackHome, attackAway, defHome, defAway,
+     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0) {
     this.code = code;
     this.name = name;
     this.attackHome = attackHome;
@@ -25,6 +26,7 @@ class Team{
     this.d = d;
     this.scored = scored;
     this.conceeded = conceeded;
+
   }
 
   print(){
@@ -40,6 +42,26 @@ class Team{
     return this.name;
   }
 }
+
+/*class Player{
+  constructor(team_code, code, web_name, first_name, second_name, squad_number, ){
+    this.team_code = team_code;
+    this.code = code;
+    this.web_name = web_name;
+    this.first_name = first_name;
+    this.second_name = second_name;
+    this.squad_number = squad_number;
+    this.
+    this.
+    this.
+    this.
+
+  }
+  getImage(){
+    return `images/${this.team_code}/${this.code}.png`;
+
+  }
+}*/
 
 //holds all teams
 let clubs = [];
