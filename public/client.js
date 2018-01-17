@@ -43,25 +43,35 @@ class Team{
   }
 }
 
-/*class Player{
-  constructor(team_code, code, web_name, first_name, second_name, squad_number, ){
+class Player{
+  constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
+   goals_scored, goals_conceded, yellow_cards, red_cards, influence, creativity, threat,
+ cost, ict_index, minutes){
     this.team_code = team_code;
     this.code = code;
     this.web_name = web_name;
     this.first_name = first_name;
     this.second_name = second_name;
     this.squad_number = squad_number;
-    this.
-    this.
-    this.
-    this.
-
+    this.assists = assists;
+    this.goals_scored = goals_scored;
+    this.clean_sheets = clean_sheets;
+    this.goals_conceded = goals_conceded;
+    this.own_goals = own_goals;
+    this.yellow_cards = yellow_cards;
+    this.red_cards = red_cards;
+    this.influence = influence;
+    this.creativity = creativity;
+    this.threat = threat;
+    this.cost = cost;
+    this.ict_index = ict_index;
+    this.minutes = minutes;
   }
   getImage(){
     return `images/${this.team_code}/${this.code}.png`;
 
   }
-}*/
+}
 
 //holds all teams
 let clubs = [];
