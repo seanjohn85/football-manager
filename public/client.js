@@ -1,15 +1,17 @@
 
 console.log('Client-side code running');
-
-
+//windows not to be displayed on start up of game
 $('#hide').hide();
 $('#messages').hide();
 $('#selectTeam').hide();
+$('#gamewindow').hide();
+
 const selectTeam = document.getElementById('selectTeam');
 
 
-
+//class used to create Team objects
 class Team{
+  //used to set class instance varaibles 
   constructor(code, name, attackHome, attackAway, defHome, defAway, points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0){
     this.code = code;
     this.name = name;
@@ -34,42 +36,29 @@ class Team{
   }
   getName(){
     return this.name;
-
   }
-
 }
 
 //holds all teams
 let clubs = [];
 
 
-
-
-
-
-
-
-
-
-
-
+let userTeam;
 
 
 //to hold the name of this users game
 let gameName;
 
 let user;
-//consts for html elementes
+//consts for html elementes to be modified by js
 const username = document.getElementById('username');
-
 const startBtn = document.getElementById('startGame');
 const quitBtn = document.getElementById('endGame');
-
-
+const modalBtn = document.getElementById('modelBtn');
 const messageBorad = document.getElementById('messages');
-//sartgame button click handle event
+
+//sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
-  //console.log(username.value);
   // sends a post method to start a game with the username from the input box
   fetch('/start', {method: 'POST',
     body: JSON.stringify({username: username.value}),
@@ -86,32 +75,31 @@ startBtn.addEventListener('click', function(e) {
     //sets the game name from the json response
     .then(function(data) {
 
+      //changes to next screen
       $('#startscreen').hide();
       $('#messages').show();
+      //modifies noticeboad content
       messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${username.value}`;
       messageBorad.getElementsByTagName("p")[0].innerHTML = `Please Select your team`;
-       console.log("data recieved");
        console.log(data.game);
        //console.log(data.teams);
        addTeams(data.teams)
        //console.log(data.teams);
-
-
+       //sets global proberies
        user = username.value;
        gameName = data.game;
-      // x = data;
-      // console.log(x);
     })
     //catches errors
     .catch(function(error) {
       console.log(error);
     });
+    //prevents multiple server requests
     startBtn.disabled = true;
-
 });
+//used to delete the game from the db if a user quits
 
 quitBtn.addEventListener('click', function(e) {
-  //console.log(x);
+  //send a server post request to end with the gameName to be deleted in the request body
   fetch('/end', {method: 'POST',
     body: JSON.stringify({game: gameName}),
     headers: {
@@ -170,16 +158,47 @@ function selectTeamMenu(){
   for (t in clubs){
     let te = clubs[t];
     console.log(clubs[t].getName());
-    $( ".selectTeam" ).append( `<div  class = 'selector col-lg-3 col-md-3'> <button onclick="myTeamIs('${clubs[t].getName()}', '${clubs[t].getCrest()}')"  data-toggle="modal" data-target="#teamModal">
+    $( ".selectTeam" ).append( `<div  class = 'selector col-lg-3 col-md-3'> <button  onclick="myTeamIs('${clubs[t].getName()}', '${clubs[t].getCrest()}')"  >
      <img src="${clubs[t].getCrest()}" class="img-responsive">
      <p> ${clubs[t].getName()} </p>
      </button></div>` );
-
   }
   $('#selectTeam').show();
 }
+
 function myTeamIs(selectedTeam, selectedCrest) {
+  $("#teamModal").modal();
   console.log(selectedTeam);
   //alert(`team is ${selectedTeam} `)
-  document.getElementById('teamconfirm').innerHTML = `You have selected ${selectedTeam}`;
+  document.getElementById('testModel').innerHTML = `You have selected ${selectedTeam}`;
+  userTeam = selectedTeam;
+  let img = `<img src="${selectedCrest}" class="img-responsive">`;
+  document.getElementById('testModel2').innerHTML = img;
 }
+
+//when the user clicks to confirm their team this is triggered to notify the server and start the game
+modalBtn.addEventListener('click', function(e) {
+  //removes selection screen
+  $('#selectTeam').hide();
+  messageBorad.getElementsByTagName("p")[0].innerHTML = "UPDATING GAME DATA";
+  console.log(userTeam);
+  fetch('/selectedteam', {method: 'POST',
+    body: JSON.stringify({game: gameName, userTeam, userTeam}),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(response) {
+
+     return response.json();
+   })
+    //sets the game name from the json response
+    .then(function(data) {
+      console.log("here");
+    })
+    //catches errors
+    .catch(function(error) {
+      console.log(error);
+    });
+});

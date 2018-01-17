@@ -178,18 +178,16 @@ console.log('end');
   });
 }*/
 
-  // db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
-  //   if (err) return console.log(err);
-  //   res.send(result);
-  // });
+  db.collection('testGames').deleteOne({user : req.body.game}, (err, result) => {
+    if (err) return console.log(err);
+    res.send(result);
+  });
 });
 
 
-
-// get the click data from the database
-app.get('/clicks', (req, res) => {
-
-  db.collection('testGames').find().toArray((err, result) => {
+app.post('/selectedteam', (req, res) => {
+  console.log("update here");
+  db.collection('testGames').update({game : req.body.game}, { $addToSet: { userTeam: req.body.userTeam} }, (err, result) => {
     if (err) return console.log(err);
     //console.log(result);
     res.send(result);

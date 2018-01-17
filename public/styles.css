@@ -38,23 +38,22 @@ body {
 }
 
 
-
+/* divs to allow the user to select a team*/
 .selectTeam > div {
   margin-bottom: 20px;
 
 }
-
 .selectTeam > div > button{
-
   margin: 10px;
   background-color: #e5e5e5;
   padding-bottom: 20px;
   border-radius: 15px;
 }
+/*sets the spacing aroun th crest images*/
+
 .selectTeam > div > button > img{
   padding: 20px;
 }
-
 .selectTeam > div > button > p{
   background-color: #ff015b;
   width: 100%;
@@ -62,6 +61,15 @@ body {
   text-align: center;
   padding-top: 10px;
   padding-bottom: 10px;
+}
 
+/* model styles */
+.modal-header > h2{
+  text-align: center;
+}
 
+.modal-title > img{
+  height: 400px;
+  display: block;
+    margin: 0 auto;
 }
