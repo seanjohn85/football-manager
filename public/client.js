@@ -325,7 +325,11 @@ modalBtn.addEventListener('click', function(e) {
       console.log(error);
     });
 
-    getFixtures();
+    for (let i = 0; i < 38; i++){
+      getFixtures();
+      week += 1;
+    }
+
 });
 
 
@@ -362,21 +366,29 @@ function getFixtures(){
 
         clubs.forEach(function(clubElement){
 
-          if(clubElement.name == data[fix][0] ){
+          if(clubElement.name === data[fix][0] ){
             homeTeam = clubElement;
-            homeTeam.points = 9;
-            homeTeam.print();
+            //homeTeam.points = 9;
+          //  homeTeam.print();
           }
-          if(clubElement.name == data[fix][1] ){
+          if(clubElement.name === data[fix][1]){
             awayTeam = clubElement;
-            awayTeam.print();
+            //awayTeam.print();
           }
-          
+          if (clubElement.name === "West Ham"){
+            let x = homeTeam.attackHome - awayTeam.defAway;
+            let y = awayTeam.attackAway - homeTeam.defHome;
+
+            console.log(`${x}`);
+            console.log(`${y}`);
+          }
+
+
         });
 
 
       }
-      console.log(clubs);
+      //console.log(clubs);
     })
     //catches errors
     .catch(function(error) {

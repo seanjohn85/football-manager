@@ -13,6 +13,7 @@
         "request-promise": "^4.2.2",
         "roundrobin": "^1.0.3",
         "shuffle-array": "^1.0.1",
+        "soccer-predictor": "0.0.2",
         "ws": "^3.0.0"
     },
     "devDependencies": {},
