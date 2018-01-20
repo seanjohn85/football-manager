@@ -7,6 +7,7 @@ $('#selectTeam').hide();
 $('#gamewindow').hide();
 
 const selectTeam = document.getElementById('selectTeam');
+let week = 0;
 
 
 //class used to create Team objects
@@ -50,8 +51,8 @@ class Team{
 class Player{
   //used to create player objects
   constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
-   goals_scored, clean_sheets, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
-   cost, ict_index, minutes){
+   goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+   cost, ict_index, minutes, element_type){
     this.team_code = team_code;
     this.code = code;
     this.web_name = web_name;
@@ -60,7 +61,7 @@ class Player{
     this.squad_number = squad_number;
     this.assists = assists;
     this.goals_scored = goals_scored;
-    this.clean_sheets = clean_sheets;
+    //this.clean_sheets = clean_sheets;
     this.goals_conceded = goals_conceded;
     this.own_goals = own_goals;
     this.yellow_cards = yellow_cards;
@@ -71,6 +72,7 @@ class Player{
     this.cost = cost;
     this.ict_index = ict_index;
     this.minutes = minutes;
+    this.position = element_type;
   }
 
   getImage(){
@@ -80,6 +82,32 @@ class Player{
   printName(){
     console.log(`my name is ${this.web_name}`);
   }
+  getPostion(){
+    if (this.position == 2){
+      return 'defender';
+    } else if ( this.position == 2){
+      return 'midfielder';
+    }else{
+      return 'striker';
+    }
+  }
+}
+
+
+
+class GoalKeeper extends Player{
+  constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
+   goals_scored,  goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+   cost, ict_index, minutes, element_type clean_sheets){
+     super(team_code, code, web_name, first_name, second_name, squad_number, assists,
+      goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+      cost, ict_index, minutes, element_type)
+      this.this.clean_sheets = clean_sheets;
+   }
+   getPostion(){
+     return 'goalkeeper';
+   }
+
 }
 
 //holds all teams
@@ -138,7 +166,7 @@ startBtn.addEventListener('click', function(e) {
 });
 
 //used to delete the game from the db if a user quits
-quitBtn.addEventListener('click', function(e) {
+quitBtn.addEventListener('end', function(e) {
   //send a server post request to end with the gameName to be deleted in the request body
   fetch('/end', {method: 'POST',
     body: JSON.stringify({game: gameName}),
@@ -185,28 +213,28 @@ function addTeams(teams){
   console.log(teams);
   //loop through team data from db
   for (t in teams){
-    console.log(teams[t].players);
 
     //create a new team object
     let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
+      //Gets the teams players
       for (player in teams[t].players){
-        teams[t].players[player]
+        //creates a new player object for the current player
         let p = new Player(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
           teams[t].players[player].first_name, teams[t].players[player].second_name, teams[t].players[player].squad_number,
-          teams[t].players[player].assists, teams[t].players[player].goals_scored, teams[t].players[player].clean_sheets,
+          teams[t].players[player].assists, teams[t].players[player].goals_scored,
           teams[t].players[player].goals_conceded, teams[t].players[player].own_goals,
           teams[t].players[player].yellow_cards, teams[t].players[player].red_cards, teams[t].players[player].influence,
           teams[t].players[player].creativity, teams[t].players[player].threat, teams[t].players[player].cost,
-          teams[t].players[player].ict_index, teams[t].players[player].minutes)
-
+          teams[t].players[player].ict_index, teams[t].players[player].minutes, teams[t].players[player].element_type)
+          //adds te player to its team
           newTeam.addPlayer(p);
       }
-
     //add the new team to teams array
     clubs.push(newTeam);
     //newTeam.print();
   }
+  //loads the select team menu
   selectTeamMenu();
 }
 //create the new teams menu
@@ -237,6 +265,8 @@ function myTeamIs(selectedTeam, selectedCrest) {
 modalBtn.addEventListener('click', function(e) {
   //removes selection screen
   $('#selectTeam').hide();
+  $('#gamewindow').show();
+  gamewindow
   messageBorad.getElementsByTagName("p")[0].innerHTML = "UPDATING GAME DATA";
   console.log(userTeam);
   fetch('/selectedteam', {method: 'POST',
