@@ -97,16 +97,13 @@ class Player{
 
 class GoalKeeper extends Player{
   constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
-   goals_scored,  goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
-   cost, ict_index, minutes, element_type clean_sheets){
-     super(team_code, code, web_name, first_name, second_name, squad_number, assists,
-      goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
-      cost, ict_index, minutes, element_type)
-      this.this.clean_sheets = clean_sheets;
-   }
-   getPostion(){
-     return 'goalkeeper';
-   }
+   goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+   cost, ict_index, minutes, element_type){
+    super(team_code, code, web_name, first_name, second_name, squad_number, assists,
+     goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
+     cost, ict_index, minutes, element_type, clean_sheets);
+     this.clean_sheets = clean_sheets;
+  }
 
 }
 
@@ -288,4 +285,34 @@ modalBtn.addEventListener('click', function(e) {
     .catch(function(error) {
       console.log(error);
     });
+
+    getFixtures();
 });
+
+
+
+function getFixtures(){
+
+  //send a server post request to end with the gameName to be deleted in the request body
+  fetch('/fixtures', {method: 'POST',
+    body: JSON.stringify({game: gameName, week : week}),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(response) {
+
+     return response.json();
+   })
+
+    //sets the game name from the json response
+    .then(function(data) {
+      console.log(data);
+    })
+    //catches errors
+    .catch(function(error) {
+      console.log(error);
+    });
+
+}

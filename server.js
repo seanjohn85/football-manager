@@ -213,8 +213,6 @@ console.log('end');
 
 app.post('/selectedteam', (req, res) => {
 
-
-
   //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
 
   //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
@@ -226,4 +224,27 @@ app.post('/selectedteam', (req, res) => {
     //console.log(result);
     res.send(result);
   });
+});
+
+
+app.post('/fixtures', (req, res) => {
+
+  //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
+
+  //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
+
+  console.log("request fixtuers");
+
+  console.log(req.body);
+
+  db.collection('singlePalyerGames').find({game: req.body.game}).toArray((err, fixtures) => {
+    if (err) return console.log(err);
+    //data.teams = teams[0].teamData;
+    console.log(fixtures[0].fixtures[req.body.week]);
+
+    //sends the gamename and team data back to the user
+    res.send(fixtures[0].fixtures[req.body.week]);
+
+  });
+
 });
