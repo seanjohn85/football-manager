@@ -87,12 +87,18 @@ class Player{
   //gets the players postion
   getPostion(){
     //checks the various postion codes and returns the position
-    if (this.position == 2){
-      return 'defender';
-    } else if ( this.position == 2){
-      return 'midfielder';
-    }else{
-      return 'striker';
+    switch (this.position) {
+      case 2:
+        return 'defender';
+        break;
+      case 3:
+        return 'midfielder';
+        break;
+      case 4:
+        return 'striker';
+        break;
+      default:
+        return 'invalid pos';
     }
   }
 }//end of player class
@@ -326,6 +332,14 @@ modalBtn.addEventListener('click', function(e) {
 //gets the current weeks fitures from the server
 function getFixtures(){
 
+  let wait = true;
+  const sel = document.getElementById('pl');
+
+  sel.addEventListener('click', function(e) {
+    wait = false;
+  });
+
+
   //send a server post request to end with the gameName and the current week to get the relevent fitures
   fetch('/fixtures', {method: 'POST',
     body: JSON.stringify({game: gameName, week : week}),
@@ -347,6 +361,7 @@ function getFixtures(){
       for (fix in data){
 
         clubs.forEach(function(clubElement){
+
           if(clubElement.name == data[fix][0] ){
             homeTeam = clubElement;
             homeTeam.points = 9;
@@ -356,6 +371,7 @@ function getFixtures(){
             awayTeam = clubElement;
             awayTeam.print();
           }
+          
         });
 
 
