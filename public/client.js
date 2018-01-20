@@ -14,7 +14,7 @@ let week = 0;
 class Team{
   //used to set class instance varaibles
   constructor(code, name, attackHome, attackAway, defHome, defAway,
-     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, players = []) {
+     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, players = [], userTeam = false) {
     this.code = code;
     this.name = name;
     this.attackHome = attackHome;
@@ -28,6 +28,7 @@ class Team{
     this.scored = scored;
     this.conceeded = conceeded;
     this.players = players;
+    this.userTeam = userTeam;
   }
   print(){
     console.log(`code: ${this.code} name: ${this.name}`);
@@ -41,12 +42,14 @@ class Team{
   getName(){
     return this.name;
   }
+  //adds a player object to this classes players array
   addPlayer(player){
     player.printName();
     this.players.push(player);
-
   }
-}
+}//end of Team class
+
+
 //class used to create player objects
 class Player{
   //used to create player objects
@@ -61,7 +64,6 @@ class Player{
     this.squad_number = squad_number;
     this.assists = assists;
     this.goals_scored = goals_scored;
-    //this.clean_sheets = clean_sheets;
     this.goals_conceded = goals_conceded;
     this.own_goals = own_goals;
     this.yellow_cards = yellow_cards;
@@ -74,7 +76,7 @@ class Player{
     this.minutes = minutes;
     this.position = element_type;
   }
-
+  //gets the image of the player
   getImage(){
     return `images/${this.team_code}/${this.code}.png`;
   }
@@ -82,7 +84,9 @@ class Player{
   printName(){
     console.log(`my name is ${this.web_name}`);
   }
+  //gets the players postion
   getPostion(){
+    //checks the various postion codes and returns the position
     if (this.position == 2){
       return 'defender';
     } else if ( this.position == 2){
@@ -91,21 +95,30 @@ class Player{
       return 'striker';
     }
   }
-}
+}//end of player class
 
 
-
+//this is a goodkeeper class which inherates the player class
 class GoalKeeper extends Player{
+  //all the elements of the player with the additional clean_sheets element
   constructor(team_code, code, web_name, first_name, second_name, squad_number, assists,
    goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
-   cost, ict_index, minutes, element_type){
+   cost, ict_index, minutes, element_type, clean_sheets){
+     //users the Player class constructor
     super(team_code, code, web_name, first_name, second_name, squad_number, assists,
      goals_scored, goals_conceded, own_goals, yellow_cards, red_cards, influence, creativity, threat,
-     cost, ict_index, minutes, element_type, clean_sheets);
+     cost, ict_index, minutes, element_type);
+     //sets the clean sheets
      this.clean_sheets = clean_sheets;
   }
-
-}
+  //overrides super class method
+  getPostion(){
+    return 'goalkeeper';
+  }
+  printName(){
+    console.log(`my name is ${this.web_name} I AM A GoalKeeper`);
+  }
+}//end of goalkeeper class
 
 //holds all teams
 let clubs = [];
@@ -216,16 +229,30 @@ function addTeams(teams){
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
       //Gets the teams players
       for (player in teams[t].players){
-        //creates a new player object for the current player
-        let p = new Player(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
-          teams[t].players[player].first_name, teams[t].players[player].second_name, teams[t].players[player].squad_number,
-          teams[t].players[player].assists, teams[t].players[player].goals_scored,
-          teams[t].players[player].goals_conceded, teams[t].players[player].own_goals,
-          teams[t].players[player].yellow_cards, teams[t].players[player].red_cards, teams[t].players[player].influence,
-          teams[t].players[player].creativity, teams[t].players[player].threat, teams[t].players[player].cost,
-          teams[t].players[player].ict_index, teams[t].players[player].minutes, teams[t].players[player].element_type)
-          //adds te player to its team
-          newTeam.addPlayer(p);
+        if (teams[t].players[player].element_type == 1){
+          //creates a new player object for the current player
+          const keeper = new GoalKeeper(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
+            teams[t].players[player].first_name, teams[t].players[player].second_name, teams[t].players[player].squad_number,
+            teams[t].players[player].assists, teams[t].players[player].goals_scored,
+            teams[t].players[player].goals_conceded, teams[t].players[player].own_goals,
+            teams[t].players[player].yellow_cards, teams[t].players[player].red_cards, teams[t].players[player].influence,
+            teams[t].players[player].creativity, teams[t].players[player].threat, teams[t].players[player].cost,
+            teams[t].players[player].ict_index, teams[t].players[player].minutes, teams[t].players[player].element_type, teams[t].players[player].clean_sheets)
+            //adds te player to its team
+            newTeam.addPlayer(keeper);
+        }else{
+          //creates a new player object for the current player
+          const p = new Player(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
+            teams[t].players[player].first_name, teams[t].players[player].second_name, teams[t].players[player].squad_number,
+            teams[t].players[player].assists, teams[t].players[player].goals_scored,
+            teams[t].players[player].goals_conceded, teams[t].players[player].own_goals,
+            teams[t].players[player].yellow_cards, teams[t].players[player].red_cards, teams[t].players[player].influence,
+            teams[t].players[player].creativity, teams[t].players[player].threat, teams[t].players[player].cost,
+            teams[t].players[player].ict_index, teams[t].players[player].minutes, teams[t].players[player].element_type)
+            //adds te player to its team
+            newTeam.addPlayer(p);
+        }
+
       }
     //add the new team to teams array
     clubs.push(newTeam);
@@ -240,7 +267,7 @@ function selectTeamMenu(){
   for (t in clubs){
     let te = clubs[t];
     console.log(clubs[t].getName());
-    $( ".selectTeam" ).append( `<div  class = 'selector col-lg-3 col-md-3'> <button  onclick="myTeamIs('${clubs[t].getName()}', '${clubs[t].getCrest()}')"  >
+    $( ".selectTeam" ).append( `<div  class = 'selector col-lg-3 col-md-3'> <button  onclick="myTeamIs('${clubs[t].getName()}', '${clubs[t].getCrest()}', ' ${clubs[t]}')"  >
      <img src="${clubs[t].getCrest()}" class="img-responsive">
      <p> ${clubs[t].getName()} </p>
      </button></div>` );
@@ -248,9 +275,15 @@ function selectTeamMenu(){
   $('#selectTeam').show();
 }
 
-function myTeamIs(selectedTeam, selectedCrest) {
+function myTeamIs(selectedTeam, selectedCrest, ) {
   $("#teamModal").modal();
   console.log(selectedTeam);
+  for (c in clubs){
+    if (clubs[c].name == selectedTeam){
+
+    }
+  }
+  console.log(`team is ${t}`);
   //alert(`team is ${selectedTeam} `)
   document.getElementById('testModel').innerHTML = `You have selected ${selectedTeam}`;
   userTeam = selectedTeam;
@@ -290,10 +323,10 @@ modalBtn.addEventListener('click', function(e) {
 });
 
 
-
+//gets the current weeks fitures from the server
 function getFixtures(){
 
-  //send a server post request to end with the gameName to be deleted in the request body
+  //send a server post request to end with the gameName and the current week to get the relevent fitures
   fetch('/fixtures', {method: 'POST',
     body: JSON.stringify({game: gameName, week : week}),
     headers: {
@@ -308,11 +341,31 @@ function getFixtures(){
 
     //sets the game name from the json response
     .then(function(data) {
-      console.log(data);
+      //console.log(data);
+      let homeTeam;
+      let awayTeam;
+      for (fix in data){
+
+        clubs.forEach(function(clubElement){
+          if(clubElement.name == data[fix][0] ){
+            homeTeam = clubElement;
+            homeTeam.points = 9;
+            homeTeam.print();
+          }
+          if(clubElement.name == data[fix][1] ){
+            awayTeam = clubElement;
+            awayTeam.print();
+          }
+        });
+
+
+      }
+      console.log(clubs);
     })
     //catches errors
     .catch(function(error) {
       console.log(error);
     });
+
 
 }
