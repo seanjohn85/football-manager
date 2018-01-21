@@ -10,11 +10,13 @@ const selectTeam = document.getElementById('selectTeam');
 let week = 0;
 
 
+
+
 //class used to create Team objects
 class Team{
   //used to set class instance varaibles
   constructor(code, name, attackHome, attackAway, defHome, defAway,
-     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, players = [], userTeam = false) {
+     points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, played = 0, players = [], userTeam = false) {
     this.code = code;
     this.name = name;
     this.attackHome = attackHome;
@@ -27,6 +29,7 @@ class Team{
     this.d = d;
     this.scored = scored;
     this.conceeded = conceeded;
+    this.played = played;
     this.players = players;
     this.userTeam = userTeam;
   }
@@ -329,7 +332,7 @@ modalBtn.addEventListener('click', function(e) {
       getFixtures();
       week += 1;
     }
-
+    console.log(clubs);
 });
 
 
@@ -376,17 +379,23 @@ function getFixtures(){
             //awayTeam.print();
           }
           if (clubElement.name === "West Ham"){
-            let x = homeTeam.attackHome - awayTeam.defAway;
-            let y = awayTeam.attackAway - homeTeam.defHome;
+            let x = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
+            let y = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
 
-            console.log(`${x}`);
-            console.log(`${y}`);
+            awayTeam.played = awayTeam.played +1;
+            homeTeam.played = homeTeam.played +1;
+            if (x === y){
+              awayTeam.points = awayTeam.points + 1;
+              homeTeam.points = homeTeam.points + 1;
+            }else if (x > y){
+              homeTeam.points = homeTeam.points + 3;
+            }else if (x < y){
+              awayTeam.points = awayTeam.points + 3;
+            }
+            console.log(`${homeTeam.name} ${x} - ${awayTeam.name} ${y}`);
           }
 
-
         });
-
-
       }
       //console.log(clubs);
     })
@@ -395,5 +404,29 @@ function getFixtures(){
       console.log(error);
     });
 
+}
 
+//
+function getExpectedGoals(compare){
+  const minVal = -330;
+  const minGoals = 0.3;
+  const maxVal = 410;
+  const maxGoals = 3;
+
+  return minGoals + (maxGoals - minGoals)* (compare-minVal)/(maxVal-minVal);
+}
+
+//poisson thing
+//http://en.wikipedia.org/wiki/Poisson_distribution
+function goalGenerator(expectedGoals){
+  var goals = 0;
+	limit = Math.exp(-expectedGoals);
+	x = Math.random();
+
+    while(x > limit){
+        goals ++;
+        x *= Math.random();;
+    }
+
+return goals;
 }
