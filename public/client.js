@@ -135,13 +135,14 @@ class GoalKeeper extends Player{
 
 
 //consts for html elementes to be modified by js
-const username = document.getElementById('username');
-const startBtn = document.getElementById('startGame');
-const quitBtn = document.getElementById('endGame');
-const modalBtn = document.getElementById('modelBtn');
-const messageBorad = document.getElementById('messages');
-const selectTeam = document.getElementById('selectTeam');
-const loadTable = document.getElementById('loadTable');
+const username      = document.getElementById('username');
+const startBtn      = document.getElementById('startGame');
+const quitBtn       = document.getElementById('endGame');
+const modalBtn      = document.getElementById('modelBtn');
+const messageBorad  = document.getElementById('messages');
+const selectTeam    = document.getElementById('selectTeam');
+const loadTable     = document.getElementById('loadTable');
+const leagueTable   = document.getElementById('leagueTable');
 //sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
   // sends a post method to start a game with the username from the input box
@@ -166,13 +167,13 @@ startBtn.addEventListener('click', function(e) {
       //modifies noticeboad content
       messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${username.value}`;
       messageBorad.getElementsByTagName("p")[0].innerHTML = `Please Select your team`;
-       console.log(data.game);
-       //console.log(data.teams);
-       addTeams(data.teams)
-       //console.log(data.teams);
-       //sets global proberies
-       user = username.value;
-       gameName = data.game;
+      console.log(data.game);
+      //console.log(data.teams);
+      addTeams(data.teams)
+      //console.log(data.teams);
+      //sets global proberies
+      user = username.value;
+      gameName = data.game;
     })
     //catches errors
     .catch(function(error) {
@@ -396,12 +397,21 @@ function getFixtures(){
             homeTeam.played     = homeTeam.played +1;
             //modifys the points of each team
             if (homeGoals === awayGoals){
+              //this is a draw so points and drawn matches modifed
               awayTeam.points = awayTeam.points + 1;
               homeTeam.points = homeTeam.points + 1;
+              awayTeam.d = awayTeam.d + 1;
+              homeTeam.d = homeTeam.d + 1;
             }else if (homeGoals > awayGoals){
+              //this is a home win so home points, w and away l modified
               homeTeam.points = homeTeam.points + 3;
+              awayTeam.l = awayTeam.l + 1;
+              homeTeam.w = homeTeam.w + 1;
             }else if (homeGoals < awayGoals){
+              //this is an away win so away points, w and home l modified
               awayTeam.points = awayTeam.points + 3;
+              awayTeam.w = awayTeam.w + 1;
+              homeTeam.l = homeTeam.l + 1;
             }
             console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
           }
@@ -420,9 +430,9 @@ function getFixtures(){
 //
 function getExpectedGoals(compare){
   const minVal = -330;
-  const minGoals = 0.3;
+  const minGoals = 0.32;
   const maxVal = 410;
-  const maxGoals = 3;
+  const maxGoals = 2.65;
 
   return minGoals + (maxGoals - minGoals)* (compare-minVal)/(maxVal-minVal);
 }
@@ -467,4 +477,48 @@ function tableSort(){
     }
   }
   console.log(clubs);
+  createTable(clubs);
+}
+
+/* used to generate the html of the table*/
+function createTable(orderedTeams){
+  let pos = 0;
+  //creats the table header
+  let tableData =
+    `<tr class = "head">
+        <th>Pos</th>
+        <th></th>
+        <th>Team</th>
+        <th>P</th>
+        <th>W</th>
+        <th>D</th>
+        <th>L</th>
+        <th>GD</th>
+        <th>PTS</th>
+      </tr>`;
+  //loops through all the teams
+  orderedTeams.forEach(function(clubElement){
+    //adds a class to te users team
+    let classAdd = "notUser";
+    if (clubElement.name === userTeam) {
+      classAdd = 'userRow';
+    }
+    pos += 1;
+    console.log(`${clubElement.scored} - ${clubElement.conceeded}`);
+    //appends each row with the teams data
+    tableData = tableData + `
+      <tr class = "${classAdd}">
+        <td>${pos}</td>
+        <td class="dot">&#xb7;</td>
+        <td>${clubElement.name}</td>
+        <td>${clubElement.played}</td>
+        <td>${clubElement.w}</td>
+        <td>${clubElement.d}</td>
+        <td>${clubElement.l}</td>
+        <td>${clubElement.scored - clubElement.conceeded}</td>
+        <td>${clubElement.points}</td>
+      </tr>`;
+    });
+    //inserts into the html doc
+    leagueTable.innerHTML = tableData;
 }

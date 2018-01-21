@@ -73,3 +73,87 @@ body {
   display: block;
     margin: 0 auto;
 }
+
+
+table{
+  width: 600px;
+}
+tr{
+  background-color: #e5e5e5;
+  height: 30px
+  border-top 1px solid #ff015b;
+}
+
+td, th {
+  padding-left: 15px;
+}
+/*  league table styles*/
+.head{
+  background-color: #3d195b;
+  color: #ff015b;
+
+  height: 30px;
+}
+
+/*top 4*/
+tr:nth-child(5) {
+  background-color: #ff015b;
+}
+tr:nth-child(4) {
+  background-color: #ff015b;
+}
+tr:nth-child(3) {
+  background-color: #ff015b;
+}
+tr:nth-child(2) {
+  background-color: #ff015b;
+}
+
+
+/*bottom 3*/
+tr:nth-child(21) {
+  background-color: #05f1ff;
+}
+tr:nth-child(20) {
+  background-color: #05f1ff;
+}
+tr:nth-child(19) {
+  background-color: #05f1ff;
+}
+/*highlights users team*/
+.userRow{
+  background-color: #ebff00 !important;
+}
+
+.dot{
+  font-size: 30px;
+}
+td:nth-child(2) {
+  padding-left: 0px;
+}
+/* table borders*/
+tr {
+  border-bottom: 1pt solid #3d195b;
+}
+td:nth-child(3) {
+  border-right: 1pt solid #3d195b;
+}
+td:nth-child(4) {
+  border-right: 1pt solid #3d195b;
+}
+td:nth-child(5) {
+  border-right: 1pt solid #3d195b;
+}
+td:nth-child(6) {
+  border-right: 1pt solid #3d195b;
+}
+td:nth-child(7) {
+  border-right: 1pt solid #3d195b;
+}
+td:nth-child(8) {
+  border-right: 1pt solid #3d195b;
+}
+
+tr:hover{
+  background-color: #00ff95;
+}
