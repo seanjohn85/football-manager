@@ -6,11 +6,15 @@ $('#messages').hide();
 $('#selectTeam').hide();
 $('#gamewindow').hide();
 
-const selectTeam = document.getElementById('selectTeam');
+/////global vars ///////
+//holds all teams
+let clubs = [];
+//sets the users team
+let userTeam;
+//to hold the name of this users game
+let gameName;
+let user;
 let week = 0;
-
-
-
 
 //class used to create Team objects
 class Team{
@@ -129,21 +133,15 @@ class GoalKeeper extends Player{
   }
 }//end of goalkeeper class
 
-//holds all teams
-let clubs = [];
-//sets the users team
-let userTeam;
-//to hold the name of this users game
-let gameName;
 
-let user;
 //consts for html elementes to be modified by js
 const username = document.getElementById('username');
 const startBtn = document.getElementById('startGame');
 const quitBtn = document.getElementById('endGame');
 const modalBtn = document.getElementById('modelBtn');
 const messageBorad = document.getElementById('messages');
-
+const selectTeam = document.getElementById('selectTeam');
+const loadTable = document.getElementById('loadTable');
 //sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
   // sends a post method to start a game with the username from the input box
@@ -209,6 +207,11 @@ quitBtn.addEventListener('end', function(e) {
     });
     //disables button to prevent multiple server requests
     startBtn.disabled = false;
+});
+
+loadTable.addEventListener('click', function(e) {
+  console.log("view table clicked");
+  tableSort();
 });
 
 //checks the server at interval points
@@ -331,8 +334,9 @@ modalBtn.addEventListener('click', function(e) {
     for (let i = 0; i < 38; i++){
       getFixtures();
       week += 1;
+      //tableSort();
     }
-    console.log(clubs);
+    //console.log(clubs);
 });
 
 
@@ -379,20 +383,27 @@ function getFixtures(){
             //awayTeam.print();
           }
           if (clubElement.name === "West Ham"){
-            let x = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
-            let y = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
-
-            awayTeam.played = awayTeam.played +1;
-            homeTeam.played = homeTeam.played +1;
-            if (x === y){
+            //gets the goals for each team
+            let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
+            let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
+            //modifies the teams scored and conceded goals
+            homeTeam.scored     = homeTeam.scored + homeGoals;
+            awayTeam.conceeded  = awayTeam.conceeded + homeGoals;
+            awayTeam.scored     = awayTeam.scored + awayGoals;
+            homeTeam.conceeded  = homeTeam.conceeded +awayGoals;
+            //increments the amount of matches the team has played
+            awayTeam.played     = awayTeam.played +1;
+            homeTeam.played     = homeTeam.played +1;
+            //modifys the points of each team
+            if (homeGoals === awayGoals){
               awayTeam.points = awayTeam.points + 1;
               homeTeam.points = homeTeam.points + 1;
-            }else if (x > y){
+            }else if (homeGoals > awayGoals){
               homeTeam.points = homeTeam.points + 3;
-            }else if (x < y){
+            }else if (homeGoals < awayGoals){
               awayTeam.points = awayTeam.points + 3;
             }
-            console.log(`${homeTeam.name} ${x} - ${awayTeam.name} ${y}`);
+            console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
           }
 
         });
@@ -416,10 +427,10 @@ function getExpectedGoals(compare){
   return minGoals + (maxGoals - minGoals)* (compare-minVal)/(maxVal-minVal);
 }
 
-//poisson thing
+//poisson Poisson distribution used to genertate goals
 //http://en.wikipedia.org/wiki/Poisson_distribution
 function goalGenerator(expectedGoals){
-  var goals = 0;
+  let goals = 0;
 	limit = Math.exp(-expectedGoals);
 	x = Math.random();
 
@@ -427,6 +438,33 @@ function goalGenerator(expectedGoals){
         goals ++;
         x *= Math.random();;
     }
+    //returns
+    return goals;
+}
 
-return goals;
+//sorts the teams it ord of position justing a bubble sort algroitim
+function tableSort(){
+  let table = clubs;
+
+  //bubble sort
+  for (let i = 0; i < table.length; i++){
+    //loops 20 times first round and 1 less each time there after
+    for (let x = 0; x < (table.length - i - 1); x++){
+      // compares the points of 2 teasm and swaps if greater
+      if (table[x].points < table[x+1].points){
+        let swap = table[x];
+        table[x] = table[x+1];
+        table[x+1] = swap;
+        //used to check gd when to teams have the same points
+      }else if (table[x].points === table[x+1].points){
+        //compare and sort by goal difference
+        if ((table[x].scored -  table[x].conceeded) < (table[x+1].scored -  table[x+1].conceeded)){
+          let swap = table[x];
+          table[x] = table[x+1];
+          table[x+1] = swap;
+        }
+      }
+    }
+  }
+  console.log(clubs);
 }
