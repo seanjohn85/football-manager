@@ -5,6 +5,9 @@ $('#hide').hide();
 $('#messages').hide();
 $('#selectTeam').hide();
 $('#gamewindow').hide();
+$('#selectPlayers').hide();
+$('#teamSelectView').hide();
+
 
 /////global vars ///////
 //holds all teams
@@ -15,6 +18,7 @@ let userTeam;
 let gameName;
 let user;
 let week = 0;
+let currentFixtures;
 
 //class used to create Team objects
 class Team{
@@ -135,14 +139,18 @@ class GoalKeeper extends Player{
 
 
 //consts for html elementes to be modified by js
-const username      = document.getElementById('username');
-const startBtn      = document.getElementById('startGame');
-const quitBtn       = document.getElementById('endGame');
-const modalBtn      = document.getElementById('modelBtn');
-const messageBorad  = document.getElementById('messages');
-const selectTeam    = document.getElementById('selectTeam');
-const loadTable     = document.getElementById('loadTable');
-const leagueTable   = document.getElementById('leagueTable');
+const username        = document.getElementById('username');
+const startBtn        = document.getElementById('startGame');
+const quitBtn         = document.getElementById('endGame');
+const modalBtn        = document.getElementById('modelBtn');
+const messageBorad    = document.getElementById('messages');
+const selectTeam      = document.getElementById('selectTeam');
+const loadTable       = document.getElementById('loadTable');
+const leagueTable     = document.getElementById('leagueTable');
+const fixtureBtn      = document.getElementById('fixtureBtn');
+const fixtureView     = document.getElementById('fixtureView');
+const selectPlayers   = document.getElementById('selectPlayers');
+const teamSelectView  = document.getElementById('teamSelectView');
 //sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
   // sends a post method to start a game with the username from the input box
@@ -184,7 +192,7 @@ startBtn.addEventListener('click', function(e) {
 });
 
 //used to delete the game from the db if a user quits
-quitBtn.addEventListener('end', function(e) {
+quitBtn.addEventListener('click', function(e) {
   //send a server post request to end with the gameName to be deleted in the request body
   fetch('/end', {method: 'POST',
     body: JSON.stringify({game: gameName}),
@@ -209,26 +217,34 @@ quitBtn.addEventListener('end', function(e) {
     //disables button to prevent multiple server requests
     startBtn.disabled = false;
 });
-
+//event listener for view table button
 loadTable.addEventListener('click', function(e) {
   console.log("view table clicked");
   tableSort();
-});
+  $('#tableview').show();
+  $('#fixtureView').hide();
+  $('#teamSelectView').hide();
 
-//checks the server at interval points
-/*setInterval(function() {
-  fetch('/clicks', {method: 'GET'})
-    .then(function(response) {
-      if(response.ok) return response.json();
-      throw new Error('Request failed.');
-    })
-    .then(function(data) {
-      document.getElementById('counter').innerHTML = `There are  ${data.length} games created`;
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-}, 1000);*/
+
+});
+//event listener for fixture button
+fixtureBtn.addEventListener('click', function(e) {
+  console.log("fixture button");
+  $('#tableview').hide();
+  $('#teamSelectView').hide();
+  //gets the current weeks fixtures
+  getFixtures();
+});
+//event listener for team selector button
+selectPlayers.addEventListener('click', function(e) {
+  console.log("selector button");
+  $('#tableview').hide();
+  $('#fixtureView').hide();
+  $('#teamSelectView').show();
+  loadPlayerSelection();
+  // Simple list
+Sortable.create(players, { /* options */ });
+});
 
 
 //create all the team objects and add them to the teams array
@@ -332,11 +348,11 @@ modalBtn.addEventListener('click', function(e) {
       console.log(error);
     });
 
-    for (let i = 0; i < 38; i++){
+    /*for (let i = 0; i < 38; i++){
       getFixtures();
       week += 1;
       //tableSort();
-    }
+    }*/
     //console.log(clubs);
 });
 
@@ -367,8 +383,10 @@ function getFixtures(){
 
     //sets the game name from the json response
     .then(function(data) {
+      displayFixtures(data);
+
       //console.log(data);
-      let homeTeam;
+    /*  let homeTeam;
       let awayTeam;
       for (fix in data){
 
@@ -417,7 +435,7 @@ function getFixtures(){
           }
 
         });
-      }
+      }*/
       //console.log(clubs);
     })
     //catches errors
@@ -426,6 +444,42 @@ function getFixtures(){
     });
 
 }
+//inserts the fixtures into html
+function displayFixtures(data){
+  console.log(`fixtues ${data}`);
+  currentFixtures = data;
+  let html = "";
+  //loops through the fixtures and creates a table of fixture to the user
+  data.forEach(function(element){
+    let home;
+    let away;
+    //gets the clubs from the fixture and their image assets using the class methods
+    clubs.forEach(function(clubElement){
+      if (element[0] === clubElement.name){
+        home = clubElement
+      }
+      if (element[1] === clubElement.name){
+        away = clubElement
+      }
+    });
+
+    html = html + `<div class = "fixtures">
+      <table class ="single">
+        <tr>
+          <td> <img src='${home.getCrest()}' class="single img-responsive"></td>
+          <td>${home.name} </td>
+          <td class="v">V</td>
+          <td>${away.name} </td>
+          <td>  <img src='${away.getCrest()}' class=" single img-responsive"> </td>
+        </tr>
+      </table>
+    </div>`;
+  });
+
+  fixtureView.innerHTML = html;
+  $('#selectPlayers').show();
+  $('#fixtureView').show();
+}
 
 //
 function getExpectedGoals(compare){
@@ -433,7 +487,6 @@ function getExpectedGoals(compare){
   const minGoals = 0.32;
   const maxVal = 410;
   const maxGoals = 2.65;
-
   return minGoals + (maxGoals - minGoals)* (compare-minVal)/(maxVal-minVal);
 }
 
@@ -455,7 +508,6 @@ function goalGenerator(expectedGoals){
 //sorts the teams it ord of position justing a bubble sort algroitim
 function tableSort(){
   let table = clubs;
-
   //bubble sort
   for (let i = 0; i < table.length; i++){
     //loops 20 times first round and 1 less each time there after
@@ -521,4 +573,52 @@ function createTable(orderedTeams){
     });
     //inserts into the html doc
     leagueTable.innerHTML = tableData;
+}
+
+function loadPlayerSelection(){
+  let usersPlayers;
+  for (i in clubs){
+    if(clubs[i].name === userTeam){
+      usersPlayers = clubs[i].players;
+    }
+  }
+  usersPlayers.forEach(function(pl){
+    pl.printName();
+    //$("#players").append(`<li><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</li>`);
+  });
+
+  //console.log(`players to be returned ${usersPlayers}`);
+}
+
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev, id) {
+    //removes default behaviour
+    ev.preventDefault();
+    //prints childern
+    console.log(`i have ${ev.target.childElementCount} childern`);
+    //ensures only one player can be added
+    if (ev.target.childElementCount < 1){
+      console.log(id);
+      //gets the data
+      var droppedPlayer = ev.dataTransfer.getData("text");
+      console.log(`this is dropped ${droppedPlayer}`);
+      console.log(document.getElementById(droppedPlayer).getElementsByTagName("input")[0].value);
+
+      if (document.getElementById(droppedPlayer).innerHTML === "test"){
+        console.log(`cant drop`);
+      }else{
+        ev.target.appendChild(document.getElementById(droppedPlayer));
+      }
+    }
+
+
+
 }

@@ -75,49 +75,58 @@ body {
 }
 
 
-table{
-  width: 600px;
+/*league table view */
+#tableview{
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+
+  justify-content: center;
 }
-tr{
+
+#leagueTable {
+  width: 600px;
+  align-self: center;
+}
+#leagueTable tr{
   background-color: #e5e5e5;
   height: 30px
   border-top 1px solid #ff015b;
 }
 
-td, th {
+#leagueTable  td, #leagueTable  th {
   padding-left: 15px;
 }
 /*  league table styles*/
-.head{
+#leagueTable .head{
   background-color: #3d195b;
   color: #ff015b;
-
   height: 30px;
 }
 
 /*top 4*/
-tr:nth-child(5) {
+#leagueTable tr:nth-child(5) {
   background-color: #ff015b;
 }
-tr:nth-child(4) {
+#leagueTable  tr:nth-child(4) {
   background-color: #ff015b;
 }
-tr:nth-child(3) {
+#leagueTable  tr:nth-child(3) {
   background-color: #ff015b;
 }
-tr:nth-child(2) {
+#leagueTable  tr:nth-child(2) {
   background-color: #ff015b;
 }
 
 
 /*bottom 3*/
-tr:nth-child(21) {
+#leagueTable tr:nth-child(21) {
   background-color: #05f1ff;
 }
-tr:nth-child(20) {
+#leagueTable  tr:nth-child(20) {
   background-color: #05f1ff;
 }
-tr:nth-child(19) {
+#leagueTable tr:nth-child(19) {
   background-color: #05f1ff;
 }
 /*highlights users team*/
@@ -128,32 +137,151 @@ tr:nth-child(19) {
 .dot{
   font-size: 30px;
 }
-td:nth-child(2) {
+#leagueTable td:nth-child(2) {
   padding-left: 0px;
 }
 /* table borders*/
-tr {
+#leagueTable  tr {
   border-bottom: 1pt solid #3d195b;
 }
-td:nth-child(3) {
+#leagueTable  td:nth-child(3) {
   border-right: 1pt solid #3d195b;
 }
-td:nth-child(4) {
+#leagueTable  td:nth-child(4) {
   border-right: 1pt solid #3d195b;
 }
-td:nth-child(5) {
+#leagueTable  td:nth-child(5) {
   border-right: 1pt solid #3d195b;
 }
-td:nth-child(6) {
+#leagueTable  td:nth-child(6) {
   border-right: 1pt solid #3d195b;
 }
-td:nth-child(7) {
+#leagueTable  td:nth-child(7) {
   border-right: 1pt solid #3d195b;
 }
-td:nth-child(8) {
+#leagueTable  td:nth-child(8) {
   border-right: 1pt solid #3d195b;
 }
 
-tr:hover{
+#leagueTable tr:hover{
   background-color: #00ff95;
+}
+
+#gamewindow{
+  margin-top: 30px;
+}
+#leagueTable .head:hover{
+  background-color: #3d195b!important;
+
+}
+
+
+/* left menu bar styles*/
+.leftbar{
+  text-align: center;
+  display: inline-grid;
+  margin: auto;
+}
+
+.leftbar > button{
+  margin-bottom: 30px;
+  min-width: 188px;
+  border-radius: 6px;
+  height: 40px;
+  font-size: 20px;
+  color: #00ff95;
+  background-color: #3d195b;
+  border: none;
+}
+
+
+
+
+/*fixture view */
+
+.single {
+  border-radius: 10px;
+}
+.single img{
+  height: 50px;
+}
+
+.single tr{
+  background-color: #e5e5e5;
+}
+.single{
+  font-size: 25px;
+}
+.v{
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: center!important;
+  font-size: 40px;
+  color: #e5e5e5;
+  background-color: #3d195b;
+}
+.single  td:nth-child(1) {
+  padding-left: 10px;
+}
+.single  td:nth-child(5) {
+  padding-right: 10px;
+}
+
+.single  td:nth-child(2) {
+  width: 230px;
+  text-align: right;
+  padding-right: 20px;
+}
+.single  td:nth-child(4) {
+  width: 230px;
+  padding-left: 20px;
+
+}
+.fixtures{
+  margin-bottom: 20px;
+  text-align: center;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+  justify-content: center;
+}
+
+
+
+/* palyer selection screen*/
+#selectPlayers{
+  background-color: #ff015b;
+  color: #3d195b;
+
+}
+#selectPlayers:hover{
+  background-color: #3d195b;
+  color: #ff015b;
+}
+
+
+#teamSelectView{
+  background-color: #ff015b;
+}
+
+#players li img{
+  height: 60px;
+}
+#players li {
+  background-color: #e5e5e5;
+  display: inline;
+  height: 70px;
+
+}
+
+#players {
+
+  list-style: none
+
+}
+
+#goalkeeper {
+    width: 350px;
+    height: 70px;
+    padding: 10px;
+    border: 1px solid #aaaaaa;
 }
