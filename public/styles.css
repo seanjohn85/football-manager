@@ -263,25 +263,46 @@ body {
   background-color: #ff015b;
 }
 
-#players li img{
-  height: 60px;
-}
-#players li {
-  background-color: #e5e5e5;
-  display: inline;
-  height: 70px;
 
-}
-
-#players {
-
-  list-style: none
-
+#teamSelectView{
+  text-align: center;
+  margin: auto;
+  background-image: url("images/pitch.png");
+  background-size: 600px;
+  height: 450px;
 }
 
+/* styles for drop boxes to select team*/
+.defend, .mid, .attacker, #goalkeeper{
+  display: inline-flex;
+}
 #goalkeeper {
-    width: 350px;
-    height: 70px;
-    padding: 10px;
-    border: 1px solid #aaaaaa;
+    margin-top: 10px;
+}
+#leftStk, #rightStk, #leftMid, #leftCenterMid, #rightCenterMid, #rightMid, #leftBack, #leftCenterHalf, #rightCenterHalf, #rightBack{
+  margin-top: 20px;
+}
+#rightStk, #leftCenterMid, #rightCenterMid, #rightMid, #leftCenterHalf, #rightCenterHalf, #rightBack{
+  margin-right: 40px;
+}
+#leftStk, #rightStk, #leftMid, #leftCenterMid, #rightCenterMid, #rightMid, #leftBack, #leftCenterHalf, #rightCenterHalf, #rightBack, #goalkeeper {
+  width: 90px;
+  height: 90px;
+  border: 3px solid #ff015b;
+}
+
+#leftStk img, #rightStk img, #leftMid img, #leftCenterMid img, #rightCenterMid img, #rightMid img, #leftBack img, #leftCenterHalf img, #rightCenterHalf img, #rightBack img, #goalkeeper img {
+  height: 80px;
+}
+
+/* dragable players*/
+#playersSel{
+  background-color: #ff015b;
+}
+#playersSel p{
+  height: 90px;
+}
+
+#playersSel img{
+  height: 80px;
 }

@@ -79,7 +79,7 @@
           <button id="selectPlayers">Select Players</button>
           <button id="fixtureBtn">Next Fixture</button>
           <button id="loadTable">View Table</button>
-          <button id="pl">View Players</button>
+          <!--<button id="pl">View Players</button> not implemented-->
           <button id="endGame">Quit</button>
         </div>
         <!-- displays the league table-->
@@ -94,16 +94,33 @@
           </div>
         </div>
         <div class ="col-lg-9, col-md-9">
-          <div id="teamSelectView">
-            <ul id="players">
 
-            </ul>
+          <div  class ="col-lg-9, col-md-9" id="teamSelectView">
+            <div id="goalkeeper" ondrop="drop(event, this.id)" ondragover="allowDrop(event)"></div>
+            <div class ="defend">
+              <div id="rightBack" ondrop="drop(event, 'defender')" ondragover="allowDrop(event)"></div>
+              <div id="rightCenterHalf" ondrop="drop(event, 'defender')" ondragover="allowDrop(event)"></div>
+              <div id="leftCenterHalf" ondrop="drop(event, 'defender')" ondragover="allowDrop(event)"></div>
+              <div id="leftBack" ondrop="drop(event, 'defender')" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class ="mid">
+              <div id="rightMid" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+              <div id="rightCenterMid" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+              <div id="leftCenterMid" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+              <div id="leftMid" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class ="attacker">
+              <div id="rightStk" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+              <div id="leftStk" ondrop="drop(event, 'midfielder')" ondragover="allowDrop(event)"></div>
+            </div>
           </div>
-          <div id="goalkeeper" ondrop="drop(event, this.id)" ondragover="allowDrop(event)"></div>
-          <br>
-            <p id="drag1" draggable="true" ondragstart="drag(event)">test <input value = "g" hidden = "true"><p>
+          <div  class ="col-lg-9, col-md-9" id="playersSel">
+
+          </div>
+
+            <!--<p id="drag1" draggable="true" ondragstart="drag(event)">test <input value = "g" hidden = "true"><p>
             <p id="drag2" draggable="true" ondragstart="drag(event)">test drag<input value = "g" hidden = "true"><p>
-            <p id="drag3" draggable="true" ondragstart="drag(event)">test drag <input value = "g" hidden = "true"><p>
+            <p id="drag3" draggable="true" ondragstart="drag(event)">test drag <input value = "g" hidden = "true"><p>-->
         </div>
       </div>
     </div>

@@ -242,8 +242,7 @@ selectPlayers.addEventListener('click', function(e) {
   $('#fixtureView').hide();
   $('#teamSelectView').show();
   loadPlayerSelection();
-  // Simple list
-Sortable.create(players, { /* options */ });
+
 });
 
 
@@ -577,6 +576,7 @@ function createTable(orderedTeams){
 
 function loadPlayerSelection(){
   let usersPlayers;
+  let counter = 0;
   for (i in clubs){
     if(clubs[i].name === userTeam){
       usersPlayers = clubs[i].players;
@@ -585,6 +585,8 @@ function loadPlayerSelection(){
   usersPlayers.forEach(function(pl){
     pl.printName();
     //$("#players").append(`<li><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</li>`);
+    $("#playersSel").append(`<img  src = "${pl.getImage()}" id="${pl.web_name}" data-toggle="tooltip" data-placement="bottom" title="${pl.squad_number}:${pl.web_name}" draggable="true" ondragstart="drag(event)">`
+    /*`<p id="${pl.web_name}" draggable="true" ondragstart="drag(event)"><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</p>`*/);
   });
 
   //console.log(`players to be returned ${usersPlayers}`);
@@ -610,15 +612,17 @@ function drop(ev, id) {
       //gets the data
       var droppedPlayer = ev.dataTransfer.getData("text");
       console.log(`this is dropped ${droppedPlayer}`);
-      console.log(document.getElementById(droppedPlayer).getElementsByTagName("input")[0].value);
-
-      if (document.getElementById(droppedPlayer).innerHTML === "test"){
+      //console.log(document.getElementById(droppedPlayer).getElementsByTagName("input")[0].value);
+      ev.target.appendChild(document.getElementById(droppedPlayer));
+      /*if (document.getElementById(droppedPlayer).innerHTML === "test"){
         console.log(`cant drop`);
       }else{
         ev.target.appendChild(document.getElementById(droppedPlayer));
-      }
+      }*/
     }
-
-
-
 }
+
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
