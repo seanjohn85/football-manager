@@ -273,7 +273,7 @@ body {
 }
 
 /* styles for drop boxes to select team*/
-.defend, .mid, .attacker, #goalkeeper{
+.defend, .mid, .attacker, #goalkeeper {
   display: inline-flex;
 }
 #goalkeeper {
@@ -297,6 +297,7 @@ body {
 
 /* dragable players*/
 #playersSel{
+  margin-top: 20px;
   background-color: #ff015b;
 }
 #playersSel p{

@@ -19,6 +19,7 @@ let gameName;
 let user;
 let week = 0;
 let currentFixtures;
+let myPlayers;
 
 //class used to create Team objects
 class Team{
@@ -94,6 +95,9 @@ class Player{
 
   printName(){
     console.log(`my name is ${this.web_name}`);
+  }
+  getDetails(){
+    return `${this.squad_number}: ${this.first_name} ${this.second_name}`;
   }
   //gets the players postion
   getPostion(){
@@ -308,13 +312,14 @@ function myTeamIs(selectedTeam, selectedCrest, ) {
   console.log(selectedTeam);
   for (c in clubs){
     if (clubs[c].name == selectedTeam){
-
+        userTeam = clubs[c];
+        break;
     }
   }
   console.log(`team is ${t}`);
   //alert(`team is ${selectedTeam} `)
   document.getElementById('testModel').innerHTML = `You have selected ${selectedTeam}`;
-  userTeam = selectedTeam;
+  //userTeam = selectedTeam;
   let img = `<img src="${selectedCrest}" class="img-responsive">`;
   document.getElementById('testModel2').innerHTML = img;
 }
@@ -360,11 +365,11 @@ modalBtn.addEventListener('click', function(e) {
 function getFixtures(){
 
   let wait = true;
-  const sel = document.getElementById('pl');
+  /*const sel = document.getElementById('pl');
 
   sel.addEventListener('click', function(e) {
     wait = false;
-  });
+  });*/
 
 
   //send a server post request to end with the gameName and the current week to get the relevent fitures
@@ -576,13 +581,14 @@ function createTable(orderedTeams){
 
 function loadPlayerSelection(){
   let usersPlayers;
-  let counter = 0;
+  /*let counter = 0;
   for (i in clubs){
     if(clubs[i].name === userTeam){
       usersPlayers = clubs[i].players;
     }
-  }
-  usersPlayers.forEach(function(pl){
+  }*/
+  //myPlayers = usersPlayers;
+  userTeam.players.forEach(function(pl){
     pl.printName();
     //$("#players").append(`<li><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</li>`);
     $("#playersSel").append(`<img  src = "${pl.getImage()}" id="${pl.web_name}" data-toggle="tooltip" data-placement="bottom" title="${pl.squad_number}:${pl.web_name}" draggable="true" ondragstart="drag(event)">`
@@ -592,37 +598,110 @@ function loadPlayerSelection(){
   //console.log(`players to be returned ${usersPlayers}`);
 }
 
-
+//allows drop behaviour
 function allowDrop(ev) {
     ev.preventDefault();
 }
-
+//allows the players to be draged
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
 }
-
-function drop(ev, id) {
+//used to handle the drop player event
+function drop(ev, pos) {
     //removes default behaviour
     ev.preventDefault();
     //prints childern
     console.log(`i have ${ev.target.childElementCount} childern`);
     //ensures only one player can be added
     if (ev.target.childElementCount < 1){
-      console.log(id);
+      //console.log(id);
       //gets the data
       var droppedPlayer = ev.dataTransfer.getData("text");
       console.log(`this is dropped ${droppedPlayer}`);
-      //console.log(document.getElementById(droppedPlayer).getElementsByTagName("input")[0].value);
-      ev.target.appendChild(document.getElementById(droppedPlayer));
-      /*if (document.getElementById(droppedPlayer).innerHTML === "test"){
-        console.log(`cant drop`);
+      //gets the postion of the selected player
+      let playerPos;
+      userTeam.players.forEach(function(p){
+        //when the palyer is the draged player set postition
+        if (droppedPlayer === p.web_name){
+          playerPos = p.getPostion();
+        }
+      });
+      //check the postion of the drop box
+      //if its a goalkeeper
+      if (pos === "goalkeeper"){
+        //only allow a goalkeeper to play in goal
+        if(playerPos === "goalkeeper"){
+          //add the player to the dropable box
+          ev.target.appendChild(document.getElementById(droppedPlayer));
+          //if the user is trying to add a player thats not a goalkeeper display an error
+        }else{
+          console.log("i want a goalkeeper");
+          messageBorad.innerHTML = ``;
+        }
       }else{
-        ev.target.appendChild(document.getElementById(droppedPlayer));
-      }*/
+        if(playerPos !== "goalkeeper"){
+          ev.target.appendChild(document.getElementById(droppedPlayer));
+        }else{
+          console.log("i dont want a goalkeeper");
+
+        }
+      }
     }
+    //if 11 players are selected sets user team values
+    checkIfTeamSelected();
+}//close drop player function
+
+function checkIfTeamSelected(){
+  const childern = document.getElementById("goalkeeper").childElementCount +
+    document.getElementById("rightBack").childElementCount +
+    document.getElementById("rightCenterHalf").childElementCount +
+    document.getElementById("leftCenterHalf").childElementCount +
+    document.getElementById("leftBack").childElementCount +
+    document.getElementById("rightMid").childElementCount +
+    document.getElementById("rightCenterMid").childElementCount +
+    document.getElementById("leftCenterMid").childElementCount +
+    document.getElementById("leftMid").childElementCount +
+    document.getElementById("rightStk").childElementCount +
+    document.getElementById("leftStk" ).childElementCount;
+    console.log(`there are ${childern} players selected`);
+
+    if(childern === 11){
+      console.log('setplayers');
+      //get the values for the seleted team
+      const gk  = getPlayer(document.getElementById("goalkeeper").childNodes[0].id);
+      const rb  = getPlayer(document.getElementById("rightBack").childNodes[0].id);
+      const cb1 = getPlayer(document.getElementById("rightCenterHalf").childNodes[0].id);
+      const cb2 = getPlayer(document.getElementById("leftCenterHalf").childNodes[0].id);
+      const lb  = getPlayer(document.getElementById("leftBack").childNodes[0].id);
+      const rm  = getPlayer(document.getElementById("rightMid").childNodes[0].id);
+      const cm1 = getPlayer(document.getElementById("rightCenterMid").childNodes[0].id);
+      const cm2 = getPlayer(document.getElementById("leftCenterMid").childNodes[0].id);
+      const lm  = getPlayer(document.getElementById("leftMid").childNodes[0].id);
+      const st1 = getPlayer(document.getElementById("rightStk").childNodes[0].id);
+      const st2 = getPlayer(document.getElementById("leftStk").childNodes[0].id);
+      //set def and attack
+      const def = 850 + parseInt(gk) + parseInt(rb) + parseInt(cb1) + parseInt(cb2) + parseInt(lb) + parseInt(cm1) + parseInt(cm2);
+      const att = 750 + parseInt(rm) + parseInt(st1) + parseInt(st2) + parseInt(lm) + parseInt(cm1) + parseInt(cm2);
+      //modifies the users team to feflect the secled players
+      userTeam.attackHome = att + 50;
+      userTeam.attackAway = att;
+      userTeam.defHome = def + 50;
+      userTeam.defAway = def;
+
+      console.log(`attack is ${att} defence is ${def}`);
+    }
+
 }
 
+//returns a rating of a selected player
+function getPlayer(playerName){
+  for (p in userTeam.players){
+    if(userTeam.players[p].web_name === playerName)
+    return userTeam.players[p].ict_index;
+  }
+}
 
+//bootstrap tooltip for each player
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
