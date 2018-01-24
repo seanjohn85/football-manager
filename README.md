@@ -48,4 +48,5 @@ If you navigate back to your terminal you will see a message indicating a new cl
 
 #### Using the application
 1. log in
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/start.png)
 
