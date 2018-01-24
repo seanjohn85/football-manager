@@ -7,7 +7,7 @@ $('#selectTeam').hide();
 $('#gamewindow').hide();
 $('#selectPlayers').hide();
 $('#teamSelectView').hide();
-
+$('#playersSel').hide();
 
 /////global vars ///////
 //holds all teams
@@ -20,6 +20,7 @@ let user;
 let week = 0;
 let currentFixtures;
 let myPlayers;
+let playersLoaded = false;
 
 //class used to create Team objects
 class Team{
@@ -228,7 +229,7 @@ loadTable.addEventListener('click', function(e) {
   $('#tableview').show();
   $('#fixtureView').hide();
   $('#teamSelectView').hide();
-
+  $('#playersSel').hide();
 
 });
 //event listener for fixture button
@@ -236,6 +237,8 @@ fixtureBtn.addEventListener('click', function(e) {
   console.log("fixture button");
   $('#tableview').hide();
   $('#teamSelectView').hide();
+  $('#teamSelectView').hide();
+  $('#playersSel').hide();
   //gets the current weeks fixtures
   getFixtures();
 });
@@ -245,6 +248,7 @@ selectPlayers.addEventListener('click', function(e) {
   $('#tableview').hide();
   $('#fixtureView').hide();
   $('#teamSelectView').show();
+  $('#playersSel').show();
   loadPlayerSelection();
 
 });
@@ -351,13 +355,6 @@ modalBtn.addEventListener('click', function(e) {
     .catch(function(error) {
       console.log(error);
     });
-
-    /*for (let i = 0; i < 38; i++){
-      getFixtures();
-      week += 1;
-      //tableSort();
-    }*/
-    //console.log(clubs);
 });
 
 
@@ -365,12 +362,6 @@ modalBtn.addEventListener('click', function(e) {
 function getFixtures(){
 
   let wait = true;
-  /*const sel = document.getElementById('pl');
-
-  sel.addEventListener('click', function(e) {
-    wait = false;
-  });*/
-
 
   //send a server post request to end with the gameName and the current week to get the relevent fitures
   fetch('/fixtures', {method: 'POST',
@@ -389,58 +380,6 @@ function getFixtures(){
     .then(function(data) {
       displayFixtures(data);
 
-      //console.log(data);
-    /*  let homeTeam;
-      let awayTeam;
-      for (fix in data){
-
-        clubs.forEach(function(clubElement){
-
-          if(clubElement.name === data[fix][0] ){
-            homeTeam = clubElement;
-            //homeTeam.points = 9;
-          //  homeTeam.print();
-          }
-          if(clubElement.name === data[fix][1]){
-            awayTeam = clubElement;
-            //awayTeam.print();
-          }
-          if (clubElement.name === "West Ham"){
-            //gets the goals for each team
-            let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
-            let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
-            //modifies the teams scored and conceded goals
-            homeTeam.scored     = homeTeam.scored + homeGoals;
-            awayTeam.conceeded  = awayTeam.conceeded + homeGoals;
-            awayTeam.scored     = awayTeam.scored + awayGoals;
-            homeTeam.conceeded  = homeTeam.conceeded +awayGoals;
-            //increments the amount of matches the team has played
-            awayTeam.played     = awayTeam.played +1;
-            homeTeam.played     = homeTeam.played +1;
-            //modifys the points of each team
-            if (homeGoals === awayGoals){
-              //this is a draw so points and drawn matches modifed
-              awayTeam.points = awayTeam.points + 1;
-              homeTeam.points = homeTeam.points + 1;
-              awayTeam.d = awayTeam.d + 1;
-              homeTeam.d = homeTeam.d + 1;
-            }else if (homeGoals > awayGoals){
-              //this is a home win so home points, w and away l modified
-              homeTeam.points = homeTeam.points + 3;
-              awayTeam.l = awayTeam.l + 1;
-              homeTeam.w = homeTeam.w + 1;
-            }else if (homeGoals < awayGoals){
-              //this is an away win so away points, w and home l modified
-              awayTeam.points = awayTeam.points + 3;
-              awayTeam.w = awayTeam.w + 1;
-              homeTeam.l = homeTeam.l + 1;
-            }
-            console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
-          }
-
-        });
-      }*/
-      //console.log(clubs);
     })
     //catches errors
     .catch(function(error) {
@@ -485,7 +424,7 @@ function displayFixtures(data){
   $('#fixtureView').show();
 }
 
-//
+//used to create the likely amount of goals a team is expected to score
 function getExpectedGoals(compare){
   const minVal = -330;
   const minGoals = 0.32;
@@ -579,23 +518,17 @@ function createTable(orderedTeams){
     leagueTable.innerHTML = tableData;
 }
 
+//loads the players for user to select from the players arrya
 function loadPlayerSelection(){
-  let usersPlayers;
-  /*let counter = 0;
-  for (i in clubs){
-    if(clubs[i].name === userTeam){
-      usersPlayers = clubs[i].players;
-    }
-  }*/
-  //myPlayers = usersPlayers;
-  userTeam.players.forEach(function(pl){
-    pl.printName();
-    //$("#players").append(`<li><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</li>`);
-    $("#playersSel").append(`<img  src = "${pl.getImage()}" id="${pl.web_name}" data-toggle="tooltip" data-placement="bottom" title="${pl.squad_number}:${pl.web_name}" draggable="true" ondragstart="drag(event)">`
-    /*`<p id="${pl.web_name}" draggable="true" ondragstart="drag(event)"><img src = "${pl.getImage()}"> ${pl.squad_number}:${pl.web_name}</p>`*/);
-  });
-
-  //console.log(`players to be returned ${usersPlayers}`);
+  //checks if the players are already loaded
+  if(!playersLoaded){
+    //gets and creats a draggabel image with a tooltip for each player
+    userTeam.players.forEach(function(pl){
+      pl.printName();
+      $("#playersSel").append(`<img  src = "${pl.getImage()}" id="${pl.web_name}" data-toggle="tooltip" data-placement="bottom" title="${pl.squad_number}:${pl.web_name}" draggable="true" ondragstart="drag(event)">`);
+    });
+    playersLoaded = true;
+  }
 }
 
 //allows drop behaviour
@@ -651,6 +584,9 @@ function drop(ev, pos) {
     checkIfTeamSelected();
 }//close drop player function
 
+/*
+when 11 players are seleted gets the players and resets teams ratings based on the selected players
+*/
 function checkIfTeamSelected(){
   const childern = document.getElementById("goalkeeper").childElementCount +
     document.getElementById("rightBack").childElementCount +
@@ -687,10 +623,103 @@ function checkIfTeamSelected(){
       userTeam.attackAway = att;
       userTeam.defHome = def + 50;
       userTeam.defAway = def;
-
       console.log(`attack is ${att} defence is ${def}`);
-    }
+      selectPlayers.disabled = true;
 
+      $('#selectPlayers').hide();
+      playCurrentFixtures();
+      //remove players from pitch
+      document.getElementById("goalkeeper").removeChild(document.getElementById("goalkeeper").childNodes[0]);
+      document.getElementById("rightBack").removeChild(document.getElementById("rightBack").childNodes[0]);
+      document.getElementById("rightCenterHalf").removeChild(document.getElementById("rightCenterHalf").childNodes[0]);
+      document.getElementById("leftCenterHalf").removeChild(document.getElementById("leftCenterHalf").childNodes[0]);
+      document.getElementById("leftBack").removeChild(document.getElementById("leftBack").childNodes[0]);
+      document.getElementById("rightMid").removeChild(document.getElementById("rightMid").childNodes[0]);
+      document.getElementById("rightCenterMid").removeChild(document.getElementById("rightCenterMid").childNodes[0]);
+      document.getElementById("leftCenterMid").removeChild(document.getElementById("leftCenterMid").childNodes[0]);
+      document.getElementById("leftMid").removeChild(document.getElementById("leftMid").childNodes[0]);
+      document.getElementById("rightStk").removeChild(document.getElementById("rightStk").childNodes[0]);
+      document.getElementById("leftStk").removeChild(document.getElementById("leftStk").childNodes[0]);
+    }
+}
+/* This function loops through all the current fixtures and generates the results for
+each fixture*/
+function playCurrentFixtures(){
+  let homeTeam;
+  let awayTeam;
+  let html = ""
+  $('#teamSelectView').hide();
+  $('#playersSel').hide();
+  //loops through each fixture
+  for (fix in currentFixtures){
+      //fids the club for each fixture
+      clubs.forEach(function(clubElement){
+        //gets the home team
+        if(clubElement.name === currentFixtures[fix][0] ){
+          homeTeam = clubElement;
+        }
+        //gets the away tema
+        if(clubElement.name === currentFixtures[fix][1]){
+          awayTeam = clubElement;
+        }
+        //when the last club is hit generate results
+        if (clubElement.name === "West Ham"){
+          //gets the goals for each team
+          let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
+          let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
+          //modifies the teams scored and conceded goals
+          homeTeam.scored     = homeTeam.scored + homeGoals;
+          awayTeam.conceeded  = awayTeam.conceeded + homeGoals;
+          awayTeam.scored     = awayTeam.scored + awayGoals;
+          homeTeam.conceeded  = homeTeam.conceeded +awayGoals;
+          //increments the amount of matches the team has played
+          awayTeam.played     = awayTeam.played +1;
+          homeTeam.played     = homeTeam.played +1;
+          //modifys the points of each team
+          if (homeGoals === awayGoals){
+            //this is a draw so points and drawn matches modifed
+            awayTeam.points = awayTeam.points + 1;
+            homeTeam.points = homeTeam.points + 1;
+            awayTeam.d = awayTeam.d + 1;
+            homeTeam.d = homeTeam.d + 1;
+          }else if (homeGoals > awayGoals){
+            //this is a home win so home points, w and away l modified
+            homeTeam.points = homeTeam.points + 3;
+            awayTeam.l = awayTeam.l + 1;
+            homeTeam.w = homeTeam.w + 1;
+          }else if (homeGoals < awayGoals){
+            //this is an away win so away points, w and home l modified
+            awayTeam.points = awayTeam.points + 3;
+            awayTeam.w = awayTeam.w + 1;
+            homeTeam.l = homeTeam.l + 1;
+          }
+          html = html + `<div class = "fixtures">
+            <table class ="single">
+              <tr>
+                <td> <img src='${homeTeam.getCrest()}' class="single img-responsive"></td>
+                <td>${homeTeam.name} </td>
+                <td class="v">${homeGoals} - ${awayGoals}</td>
+                <td>${awayTeam.name} </td>
+                <td>  <img src='${awayTeam.getCrest()}' class=" single img-responsive"> </td>
+              </tr>
+            </table>
+          </div>`;
+          $('#fixtureView').show();
+          fixtureView.innerHTML = html;
+
+          //log results
+          console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
+        }
+      });
+    }
+    //moves to the next week
+    week = week + 1;
+    //clears currentfitures array
+    currentFixtures = {};
+    //allows players to load again for the user to select
+    playersLoaded = false;
+    selectPlayers.disabled = false;
+    document.getElementById('playersSel').innerHTML = "";
 }
 
 //returns a rating of a selected player
