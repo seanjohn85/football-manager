@@ -1,15 +1,7 @@
 # football-manager
 # This EPL Football Manager game uses ES6, JSON, a node server app using Express and a Mongo DB database.
 
-The game uses algorithms such as round robin and a random sort to generate different fixtures every time the game is played.
-The game allows the user to select a premier league team and simulate one season as the selected team. 
-The stats for the teams and players are real stats taken from fantasy football.
-The user will impact the quality of their team based on their team selection.
-A lamba fuction combined with a poisson Poisson distribution used to genertate goals
-http://en.wikipedia.org/wiki/Poisson_distribution
-The user uses a drad and drop feature to select their players.
-The dataabse contains full CRUD functionality.
-The leauge table is soted by points goals and alphabetically.
+sort to generate different fixtures every time the game is played. The game allows the user to select a premier league team and simulate one season as the selected team. The stats for the teams and players are real stats taken from fantasy football. The user will impact the quality of their team based on their team selection. A lambda function combined with a Poisson distribution used to generate goals http://en.wikipedia.org/wiki/Poisson_distribution The user uses a drag and drop feature to select their players. The database contains full CRUD functionality. The league table is sorted by points goals and alphabetically.
 
 
 
@@ -47,7 +39,7 @@ If you navigate back to your terminal you will see a message indicating a new cl
 
 
 #### Using the application
-1. log in with any game and a unique game will be created
+1. log in with any name and a unique game will be created
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/start.png)
 2. Select a team from the list of teams
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/select.png)
