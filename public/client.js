@@ -156,6 +156,8 @@ const fixtureBtn      = document.getElementById('fixtureBtn');
 const fixtureView     = document.getElementById('fixtureView');
 const selectPlayers   = document.getElementById('selectPlayers');
 const teamSelectView  = document.getElementById('teamSelectView');
+const quit            = document.getElementById('quit');
+const deleteBtn       = document.getElementById('delete');
 //sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
   // sends a post method to start a game with the username from the input box
@@ -197,7 +199,7 @@ startBtn.addEventListener('click', function(e) {
 });
 
 //used to delete the game from the db if a user quits
-quitBtn.addEventListener('click', function(e) {
+deleteBtn.addEventListener('click', function(e) {
   //send a server post request to end with the gameName to be deleted in the request body
   fetch('/end', {method: 'POST',
     body: JSON.stringify({game: gameName}),
@@ -214,6 +216,7 @@ quitBtn.addEventListener('click', function(e) {
     //sets the game name from the json response
     .then(function(data) {
       console.log("here");
+      location.reload();
     })
     //catches errors
     .catch(function(error) {
@@ -250,7 +253,6 @@ selectPlayers.addEventListener('click', function(e) {
   $('#teamSelectView').show();
   $('#playersSel').show();
   loadPlayerSelection();
-
 });
 
 
@@ -327,6 +329,9 @@ function myTeamIs(selectedTeam, selectedCrest, ) {
   let img = `<img src="${selectedCrest}" class="img-responsive">`;
   document.getElementById('testModel2').innerHTML = img;
 }
+quit.addEventListener('click', function(e) {
+  location.reload();
+});
 
 //when the user clicks to confirm their team this is triggered to notify the server and start the game
 modalBtn.addEventListener('click', function(e) {
@@ -346,10 +351,13 @@ modalBtn.addEventListener('click', function(e) {
   .then(function(response) {
 
      return response.json();
+
    })
     //sets the game name from the json response
     .then(function(data) {
       console.log("here");
+      //quit messages set
+      document.getElementById('quit2').innerHTML = `The gameName <b>${gameName} can be used to log in and continue the game at a later date</b>`;
     })
     //catches errors
     .catch(function(error) {
@@ -774,4 +782,5 @@ function getPlayer(playerName){
 //bootstrap tooltip for each player
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
+
 });

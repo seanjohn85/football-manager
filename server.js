@@ -110,8 +110,6 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-
-
 /*
 This fuction is triggered when a user creates a new games
 the user game is sent to the server and a new game is created in the db
@@ -124,22 +122,11 @@ console.log('Data received: ' + req.body.username);
   //create a new game object to add to the db
   let newGame = {teamData};
   //sets a unique game name
-
   newGame.game = req.body.username + gameCounter;
   //sets the palyers name
   newGame.user = req.body.username;
-
-  //newGame.user = {username : req.body.username, gamename: req.body.username + gameCounter,
-            //      date : new Date(), gameNo : gameCounter};
   //let to hold fixtures
   newGame.fixtures = fixtureGenerator();
-  /*for (i in teams){
-
-    newGame[teams[i]] = setUp;
-  }*/
-  //newGame.teamData = [];
-  //newGame.teamData = [gameData];
-  //newGame.push(teamData);
   console.log(db);
   //save the newGame data to the database
   db.collection('singlePalyerGames').save(newGame, (err, result) => {
@@ -150,27 +137,17 @@ console.log('Data received: ' + req.body.username);
     let named = req.body.username + gameCounter;
     let data = {game: named};
     console.log('new Game Created');
-
-    //gets all the teams from the database and returns data to the user
-    /*db.collection('teams').find().toArray((err, teams) => {
-      if (err) return console.log(err);
-      data.teams = teams;
-      //sends the gamename and team data back to the user
-      res.send(data);
-    });*/
     db.collection('singlePalyerGames').find({game: named}).toArray((err, teams) => {
       if (err) return console.log(err);
       data.teams = teams[0].teamData;
       console.log(teams[0].teamData);
       //sends the gamename and team data back to the user
       res.send(data);
-
     });
   });
 });
 
-
-// get the click data from the database
+//deletes the game from the db
 app.post('/end', (req, res) => {
   //deletes a game by game name
   db.collection('singlePalyerGames').deleteOne({game : req.body.game}, (err, result) => {
@@ -179,7 +156,7 @@ app.post('/end', (req, res) => {
   });
 });
 
-//updayes the database with the team the user has selected
+//updates the database with the team the user has selected
 app.post('/selectedteam', (req, res) => {
 
   db.collection('singlePalyerGames').update({game : req.body.game}, { $addToSet: {userTeam: req.body.userTeam}}, (err, result) => {
@@ -203,10 +180,10 @@ app.post('/fixtures', (req, res) => {
 //user request to get the update the results of a set of fixtures
 app.post('/results', (req, res) => {
   console.log("update results");
+  //updates the users game with the new results
   db.collection('singlePalyerGames').update({game : req.body.game}, { $set: {teamData: req.body.teamData}}, (err, result) => {
     if (err) return console.log(err);
     //console.log(result);
     res.send(result);
   });
-
 });
