@@ -80,7 +80,6 @@ body {
   text-align: center;
   text-align: -webkit-center;
   text-align: -moz-center;
-
   justify-content: center;
 }
 
@@ -130,8 +129,8 @@ body {
   background-color: #05f1ff;
 }
 /*highlights users team*/
-#leagueTable .userRow{
-  background-color: #ebff00 !important;
+.userRow{
+  background-color: #ebff00!important;
 }
 
 .dot{

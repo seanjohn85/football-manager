@@ -158,6 +158,7 @@ app.post('/loadgame', (req, res) => {
     if (err) return console.log(err);
     data.teams = teams[0].teamData;
     data.user = teams[0].user;
+    data.game = teams[0].game;
     data.userTeam = teams[0].userTeam;
     //console.log(teams[0].teamData);
     console.log(teams[0].userTeam);

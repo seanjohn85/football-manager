@@ -105,7 +105,7 @@ class Player{
   //gets the players postion
   getPostion(){
     //checks the various postion codes and returns the position
-    switch (this.position) {
+    switch (this.element_type) {
       case 2:
         return 'defender';
         break;
@@ -228,7 +228,7 @@ reload.addEventListener('click', function(e) {
       $('#messages').show();
 
       //modifies noticeboad content
-      messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${username.value}`;
+      messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${data.user}`;
       messageBorad.getElementsByTagName("p")[0].innerHTML = `You Have logged in`;
       //console.log(`game data ${data.userTeam}`);
       addTeams(data.teams);
@@ -576,7 +576,7 @@ function createTable(orderedTeams){
   orderedTeams.forEach(function(clubElement){
     //adds a class to te users team
     let classAdd = "notUser";
-    if (clubElement.name === userTeam) {
+    if (clubElement.name === userTeam.name) {
       classAdd = 'userRow';
     }
     pos += 1;
@@ -754,11 +754,7 @@ function playCurrentFixtures(){
         if(clubElement.name === currentFixtures[fix][1]){
           awayTeam = clubElement;
         }
-
-
-
       });
-
       //gets the goals for each team
       let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.strength_attack_home - awayTeam.strength_defence_away,-330)));
       let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.strength_attack_away - homeTeam.strength_defence_home,-330)));
