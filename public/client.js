@@ -312,8 +312,11 @@ fixtureBtn.addEventListener('click', function (e) {
   $('#teamSelectView').hide();
   $('#teamSelectView').hide();
   $('#playersSel').hide();
-  //gets the current weeks fixtures
-  getFixtures();
+  //gets the current weeks fixtures 38 is the last game week
+  if (week < 38){
+    getFixtures();
+  }
+
 });
 //event listener for team selector button
 selectPlayers.addEventListener('click', function (e) {
