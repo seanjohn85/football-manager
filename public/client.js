@@ -89,7 +89,7 @@ class Player{
     this.cost = cost;
     this.ict_index = ict_index;
     this.minutes = minutes;
-    this.position = element_type;
+    this.element_type = element_type;
   }
   //gets the image of the player
   getImage(){
@@ -338,6 +338,7 @@ function addTeams(teams){
       teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away, teams[t].points, teams[t].w, teams[t].l, teams[t].d, teams[t].scored, teams[t].conceeded, teams[t].played);
       //Gets the teams players
       for (player in teams[t].players){
+        console.log();
         if (teams[t].players[player].element_type == 1){
           //creates a new player object for the current player
           const keeper = new GoalKeeper(teams[t].players[player].team_code, teams[t].players[player].code, teams[t].players[player].web_name,
@@ -650,18 +651,18 @@ function drop(ev, pos) {
           //add the player to the dropable box
           ev.target.appendChild(document.getElementById(droppedPlayer));
           //if the user is trying to add a player thats not a goalkeeper display an error
-          messageBorad.innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
+          messageBorad.getElementsByTagName("p")[0].innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
         }else{
           console.log("i want a goalkeeper");
-          messageBorad.innerHTML = `Only a goalkeeper can play in goal`;
+          messageBorad.getElementsByTagName("p")[0].innerHTML = `Only a goalkeeper can play in goal`;
         }
       }else{
         if(playerPos !== "goalkeeper"){
           ev.target.appendChild(document.getElementById(droppedPlayer));
-          messageBorad.innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
+          messageBorad.getElementsByTagName("p")[0].innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
         }else{
           console.log("i dont want a goalkeeper");
-          messageBorad.innerHTML = `A goalkeeper can only play in goal`;
+          messageBorad.getElementsByTagName("p")[0].innerHTML = `A goalkeeper can only play in goal`;
 
         }
       }
@@ -807,7 +808,7 @@ function playCurrentFixtures(){
     }
     //moves to the next week
     week = week + 1;
-    messageBorad.innerHTML = `Week ${week} results are now in`;
+    messageBorad.getElementsByTagName("p")[0].innerHTML = `Week ${week} results are now in`;
     //clears currentfitures array
     currentFixtures = {};
     //allows players to load again for the user to select
