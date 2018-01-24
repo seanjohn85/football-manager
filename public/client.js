@@ -27,14 +27,14 @@ let playersLoaded = false;
 //class used to create Team objects
 class Team{
   //used to set class instance varaibles
-  constructor(code, name, attackHome, attackAway, defHome, defAway,
+  constructor(code, name, strength_attack_home, strength_attack_away, strength_defence_home, strength_defence_away,
      points = 0, w = 0, l = 0, d  = 0, scored = 0, conceeded = 0, played = 0, players = [], userTeam = false) {
     this.code = code;
     this.name = name;
-    this.attackHome = attackHome;
-    this.attackAway = attackAway;
-    this.defHome = defHome;
-    this.defAway = defAway;
+    this.strength_attack_home = strength_attack_home;
+    this.strength_attack_away = strength_attack_away;
+    this.strength_defence_home = strength_defence_home;
+    this.strength_defence_away = strength_defence_away;
     this.points = points;
     this.w = w;
     this.l = l;
@@ -754,57 +754,57 @@ function playCurrentFixtures(){
         if(clubElement.name === currentFixtures[fix][1]){
           awayTeam = clubElement;
         }
-        //when the last club is hit generate results
-        if (clubElement.name === "West Ham"){
-          //gets the goals for each team
-          let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.attackHome - awayTeam.defAway,-330)));
-          let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.attackAway - homeTeam.defHome,-330)));
-          //modifies the teams scored and conceded goals
-          homeTeam.scored     = homeTeam.scored + homeGoals;
-          awayTeam.conceeded  = awayTeam.conceeded + homeGoals;
-          awayTeam.scored     = awayTeam.scored + awayGoals;
-          homeTeam.conceeded  = homeTeam.conceeded +awayGoals;
-          //increments the amount of matches the team has played
-          awayTeam.played     = awayTeam.played +1;
-          homeTeam.played     = homeTeam.played +1;
-          //modifys the points of each team
-          if (homeGoals === awayGoals){
-            //this is a draw so points and drawn matches modifed
-            awayTeam.points = awayTeam.points + 1;
-            homeTeam.points = homeTeam.points + 1;
-            awayTeam.d = awayTeam.d + 1;
-            homeTeam.d = homeTeam.d + 1;
-          }else if (homeGoals > awayGoals){
-            //this is a home win so home points, w and away l modified
-            homeTeam.points = homeTeam.points + 3;
-            awayTeam.l = awayTeam.l + 1;
-            homeTeam.w = homeTeam.w + 1;
-          }else if (homeGoals < awayGoals){
-            //this is an away win so away points, w and home l modified
-            awayTeam.points = awayTeam.points + 3;
-            awayTeam.w = awayTeam.w + 1;
-            homeTeam.l = homeTeam.l + 1;
-          }
-          //display each result
-          html = html + `<div class = "fixtures">
-            <table class ="single">
-              <tr>
-                <td> <img src='${homeTeam.getCrest()}' class="single img-responsive"></td>
-                <td>${homeTeam.name} </td>
-                <td class="v">${homeGoals} - ${awayGoals}</td>
-                <td>${awayTeam.name} </td>
-                <td>  <img src='${awayTeam.getCrest()}' class=" single img-responsive"> </td>
-              </tr>
-            </table>
-          </div>`;
 
-          $('#fixtureView').show();
-          fixtureView.innerHTML = html;
 
-          //log results
-          console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
-        }
+
       });
+
+      //gets the goals for each team
+      let homeGoals = goalGenerator(getExpectedGoals(Math.max(homeTeam.strength_attack_home - awayTeam.strength_defence_away,-330)));
+      let awayGoals = goalGenerator(getExpectedGoals(Math.max(awayTeam.strength_attack_away - homeTeam.strength_defence_home,-330)));
+      //modifies the teams scored and conceded goals
+      homeTeam.scored     = homeTeam.scored + homeGoals;
+      awayTeam.conceeded  = awayTeam.conceeded + homeGoals;
+      awayTeam.scored     = awayTeam.scored + awayGoals;
+      homeTeam.conceeded  = homeTeam.conceeded +awayGoals;
+      //increments the amount of matches the team has played
+      awayTeam.played     = awayTeam.played +1;
+      homeTeam.played     = homeTeam.played +1;
+      //modifys the points of each team
+      if (homeGoals === awayGoals){
+        //this is a draw so points and drawn matches modifed
+        awayTeam.points = awayTeam.points + 1;
+        homeTeam.points = homeTeam.points + 1;
+        awayTeam.d = awayTeam.d + 1;
+        homeTeam.d = homeTeam.d + 1;
+      }else if (homeGoals > awayGoals){
+        //this is a home win so home points, w and away l modified
+        homeTeam.points = homeTeam.points + 3;
+        awayTeam.l = awayTeam.l + 1;
+        homeTeam.w = homeTeam.w + 1;
+      }else if (homeGoals < awayGoals){
+        //this is an away win so away points, w and home l modified
+        awayTeam.points = awayTeam.points + 3;
+        awayTeam.w = awayTeam.w + 1;
+        homeTeam.l = homeTeam.l + 1;
+      }
+      //display each result
+      html = html + `<div class = "fixtures">
+        <table class ="single">
+          <tr>
+            <td> <img src='${homeTeam.getCrest()}' class="single img-responsive"></td>
+            <td>${homeTeam.name} </td>
+            <td class="v">${homeGoals} - ${awayGoals}</td>
+            <td>${awayTeam.name} </td>
+            <td>  <img src='${awayTeam.getCrest()}' class=" single img-responsive"> </td>
+          </tr>
+        </table>
+      </div>`;
+      //display results
+      $('#fixtureView').show();
+      fixtureView.innerHTML = html;
+      //log results
+      console.log(`${homeTeam.name} ${homeGoals} - ${awayTeam.name} ${awayGoals}`);
     }
     //moves to the next week
     week = week + 1;
