@@ -47,6 +47,22 @@ If you navigate back to your terminal you will see a message indicating a new cl
 
 
 #### Using the application
-1. log in
+1. log in with any game and a unique game will be created
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/start.png)
+2. Select a team from the list of teams
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/select.png)
+3. Confirm your team
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/manuselected.png)
+4. Select a button to view content eg league table
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/tabel1.png)
+5. Select the fixture button to geneate the next set of fixtures
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/fix.png)
+6. A button will appear allowing you to selct your team, the players are then generated and can be placed in postion using drag and drop
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/players.png)
+8. Once 11 players are selected the results will be generated. This process is then repeated for the 38 weeks of the season.
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/results.png)
+9. The updated table can then be viewed.
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/updated table.png)
+10. Whit the quit button is pressed the user can cancel the quit operation, quit and delete all game data from the server or quit and use the provided game name to log back in at a later date to continue the game 
+![alt tag](https://github.com/seanjohn85/football-manager/blob/master/quit.png)
 
