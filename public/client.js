@@ -567,15 +567,18 @@ function drop(ev, pos) {
           //add the player to the dropable box
           ev.target.appendChild(document.getElementById(droppedPlayer));
           //if the user is trying to add a player thats not a goalkeeper display an error
+          messageBorad.innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
         }else{
           console.log("i want a goalkeeper");
-          messageBorad.innerHTML = ``;
+          messageBorad.innerHTML = `Only a goalkeeper can play in goal`;
         }
       }else{
         if(playerPos !== "goalkeeper"){
           ev.target.appendChild(document.getElementById(droppedPlayer));
+          messageBorad.innerHTML = `${droppedPlayer} a ${playerPos} is your ${pos}`;
         }else{
           console.log("i dont want a goalkeeper");
+          messageBorad.innerHTML = `A goalkeeper can only play in goal`;
 
         }
       }
@@ -645,9 +648,14 @@ function checkIfTeamSelected(){
 /* This function loops through all the current fixtures and generates the results for
 each fixture*/
 function playCurrentFixtures(){
+  //disable buttons
+  fixtureBtn.disabled = true;
+  loadTable.disabled = true;
+  //local varibles
   let homeTeam;
   let awayTeam;
   let html = ""
+  //hide unused divs
   $('#teamSelectView').hide();
   $('#playersSel').hide();
   //loops through each fixture
@@ -693,6 +701,7 @@ function playCurrentFixtures(){
             awayTeam.w = awayTeam.w + 1;
             homeTeam.l = homeTeam.l + 1;
           }
+          //display each result
           html = html + `<div class = "fixtures">
             <table class ="single">
               <tr>
@@ -704,6 +713,7 @@ function playCurrentFixtures(){
               </tr>
             </table>
           </div>`;
+
           $('#fixtureView').show();
           fixtureView.innerHTML = html;
 
@@ -714,12 +724,43 @@ function playCurrentFixtures(){
     }
     //moves to the next week
     week = week + 1;
+    messageBorad.innerHTML = `Week ${week} results are now in`;
     //clears currentfitures array
     currentFixtures = {};
     //allows players to load again for the user to select
     playersLoaded = false;
-    selectPlayers.disabled = false;
     document.getElementById('playersSel').innerHTML = "";
+    updateResults();
+}
+
+
+//gets the current weeks fitures from the server
+function updateResults(){
+  //send a server post request to end with the gameName and the current week to get the relevent fitures
+  fetch('/results', {method: 'POST',
+    body: JSON.stringify({game: gameName, week : week, teamData : clubs}),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(function(response) {
+
+     return response.json();
+   })
+
+    //sets the game name from the json response
+    .then(function(data) {
+      //reenable buttons
+      selectPlayers.disabled = false;
+      fixtureBtn.disabled = false;
+      loadTable.disabled = false;
+    })
+    //catches errors
+    .catch(function(error) {
+      console.log(error);
+    });
+
 }
 
 //returns a rating of a selected player

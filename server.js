@@ -13,7 +13,6 @@ let teams = [];
 
 //loops through the json file and creates array of teams and
 for (i in gameJSON.teams){
-
   gameJSON.teams[i].goals_conceded = 0;
   gameJSON.teams[i].goals_scored = 0;
   gameJSON.teams[i].played = 0;
@@ -54,10 +53,8 @@ for (i in gameJSON.teams){
   //console.log("here")
 }
 
-
 //this function is used to genertate fixures using round robin for a new game
 function fixtureGenerator(){
-
   //creates round robin fixtures in both normal and reverse order
   let fix = robin(20, teams);
   let fix2 = robin(20, teams.reverse());
@@ -68,14 +65,11 @@ function fixtureGenerator(){
     fixtuers.push(fix2[i]);
     fixtuers.push(fix[i]);
   }
-
+  //reurns fixtures shuffled
   return shuffle(fixtuers);
-
 }
 
-
-//console.log(gameData);
-
+//increments everytime a new game is created to enable unique game names
 let gameCounter = 0;
 
 console.log('Server-side code running');
@@ -87,8 +81,12 @@ const app = express();
 // serve files from the public directory
 app.use(express.static('public'));
 
+//increase the server app limit
+app.use(bodyparser({limit: '50mb'}));
 // needed to parse JSON data in the body of POST requests
 app.use(bodyparser.json());
+//increase the server app limit
+//app.use(express.bodyParser({limit: '50mb'}));
 
 // connect to the db and start the express server
 let db;
@@ -111,6 +109,7 @@ MongoClient.connect(url, (err, database) => {
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
+
 
 
 /*
@@ -167,57 +166,21 @@ console.log('Data received: ' + req.body.username);
       res.send(data);
 
     });
-    /*db.collection('teams').find().toArray((err, teams) => {
-      if (err) return console.log(err);
-      data.teams = teams;
-      //sends the gamename and team data back to the user
-      res.send(data);
-    });*/
-    /*db.collection('testGames').find().toArray((err, teams) => {
-      if (err) return console.log(err);
-      console.log(data.teams);
-      //data.teams = teams;
-      //sends the gamename and team data back to the user
-      res.send(data);
-    });*/
   });
 });
 
 
 // get the click data from the database
 app.post('/end', (req, res) => {
-
-console.log('end');
-/*for (i in gameJSON.teams){
-  db.collection('teams').save(gameJSON.teams[i], (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-  });
-}*/
-
-/*for (i in gameJSON.players){
-  db.collection('players').save(gameJSON.players[i], (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-  });
-}*/
-
-  db.collection('singlePalyerGames').deleteOne({user : req.body.game}, (err, result) => {
+  //deletes a game by game name
+  db.collection('singlePalyerGames').deleteOne({game : req.body.game}, (err, result) => {
     if (err) return console.log(err);
     res.send(result);
   });
 });
 
-
+//updayes the database with the team the user has selected
 app.post('/selectedteam', (req, res) => {
-
-  //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
-
-  //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
-
-  console.log("update here");
 
   db.collection('singlePalyerGames').update({game : req.body.game}, { $addToSet: {userTeam: req.body.userTeam}}, (err, result) => {
     if (err) return console.log(err);
@@ -226,25 +189,24 @@ app.post('/selectedteam', (req, res) => {
   });
 });
 
-
+//user request to get the current weeks fixtures
 app.post('/fixtures', (req, res) => {
-
-  //db.getCollection('testGames').findOne({ "game": "dacdcCS1"}).week1
-
-  //db.getCollection('testGames').findOne({game: "jfk1"}).fixtures[0][0]
-
-  console.log("request fixtuers");
-
-  console.log(req.body);
-
   db.collection('singlePalyerGames').find({game: req.body.game}).toArray((err, fixtures) => {
     if (err) return console.log(err);
     //data.teams = teams[0].teamData;
     console.log(fixtures[0].fixtures[req.body.week]);
-
     //sends the gamename and team data back to the user
     res.send(fixtures[0].fixtures[req.body.week]);
+  });
+});
 
+//user request to get the update the results of a set of fixtures
+app.post('/results', (req, res) => {
+  console.log("update results");
+  db.collection('singlePalyerGames').update({game : req.body.game}, { $set: {teamData: req.body.teamData}}, (err, result) => {
+    if (err) return console.log(err);
+    //console.log(result);
+    res.send(result);
   });
 
 });
