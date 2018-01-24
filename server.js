@@ -147,6 +147,33 @@ console.log('Data received: ' + req.body.username);
   });
 });
 
+/*
+This fuction is triggered when a user reloads an old game
+*/
+app.post('/loadgame', (req, res) => {
+  console.log('Data received: ' + req.body.gamename);
+  let data = {game: req.body.gamename};
+
+  db.collection('singlePalyerGames').find({game: req.body.gamename}).toArray((err, teams) => {
+    if (err) return console.log(err);
+    data.teams = teams[0].teamData;
+    data.user = teams[0].user;
+    data.userTeam = teams[0].userTeam;
+    //console.log(teams[0].teamData);
+    console.log(teams[0].userTeam);
+    //sends the gamename and team data back to the user
+    res.send(data);
+  });
+  });
+
+
+
+
+
+
+
+
+
 //deletes the game from the db
 app.post('/end', (req, res) => {
   //deletes a game by game name

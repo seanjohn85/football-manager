@@ -8,6 +8,8 @@ $('#gamewindow').hide();
 $('#selectPlayers').hide();
 $('#teamSelectView').hide();
 $('#playersSel').hide();
+$('#continueScreen').hide();
+
 
 /////global vars ///////
 //holds all teams
@@ -158,6 +160,10 @@ const selectPlayers   = document.getElementById('selectPlayers');
 const teamSelectView  = document.getElementById('teamSelectView');
 const quit            = document.getElementById('quit');
 const deleteBtn       = document.getElementById('delete');
+const conBtn          = document.getElementById('continue');
+const newGame         = document.getElementById('newgame');
+const reload          = document.getElementById('reload');
+const gName           = document.getElementById('gameName');
 //sartgame button click handle event to send server reqeust to set up game
 startBtn.addEventListener('click', function(e) {
   // sends a post method to start a game with the username from the input box
@@ -196,6 +202,62 @@ startBtn.addEventListener('click', function(e) {
     });
     //prevents multiple server requests
     startBtn.disabled = true;
+});
+
+
+//load old game from db
+reload.addEventListener('click', function(e) {
+  // sends a post method to start a game with the username from the input box
+  fetch('/loadgame', {method: 'POST',
+    body: JSON.stringify({gamename: gName.value}),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+  //handles server response
+    .then(function(response) {
+      if(response.ok) return response.json();
+      throw new Error('Request failed.');
+    })
+    //sets the game name from the json response
+    .then(function(data) {
+
+      //changes to next screen
+      $('#startscreen').hide();
+      $('#messages').show();
+
+      //modifies noticeboad content
+      messageBorad.getElementsByTagName("h1")[0].innerHTML = `Hello ${username.value}`;
+      messageBorad.getElementsByTagName("p")[0].innerHTML = `You Have logged in`;
+      //console.log(`game data ${data.userTeam}`);
+      addTeams(data.teams);
+      //sets game proberies
+      user = data.user;
+      gameName = data.game;
+      //sets the users team
+      clubs.forEach(function(el){
+        if(data.userTeam[0].name === el.name){
+          userTeam = el;
+        }
+      });
+      //changes display windows
+      $('#selectTeam').hide();
+      $('#gamewindow').show();
+      console.log(data.user[0]);
+      //sest the week to the number of games played
+      week = clubs[0].played;
+      tableSort();
+      $('#tableview').show();
+
+    })
+    //catches errors
+    .catch(function(error) {
+      console.log(error);
+    });
+    $('#continueScreen').hide();
+    $('#continueScreen').hide();
+
 });
 
 //used to delete the game from the db if a user quits
@@ -254,7 +316,16 @@ selectPlayers.addEventListener('click', function(e) {
   $('#playersSel').show();
   loadPlayerSelection();
 });
-
+//move to the conintue gaem screen
+conBtn.addEventListener('click', function(e) {
+  $('#continueScreen').show();
+  $('#startscreen').hide();
+});
+//move to new game screen
+newGame.addEventListener('click', function(e) {
+  $('#continueScreen').hide();
+  $('#startscreen').show();
+});
 
 //create all the team objects and add them to the teams array
 function addTeams(teams){
@@ -264,7 +335,7 @@ function addTeams(teams){
 
     //create a new team object
     let newTeam = new Team(teams[t].code, teams[t].name, teams[t].strength_attack_home,
-      teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away);
+      teams[t].strength_attack_away, teams[t].strength_defence_home, teams[t].strength_defence_away, teams[t].points, teams[t].w, teams[t].l, teams[t].d, teams[t].scored, teams[t].conceeded, teams[t].played);
       //Gets the teams players
       for (player in teams[t].players){
         if (teams[t].players[player].element_type == 1){
@@ -329,6 +400,7 @@ function myTeamIs(selectedTeam, selectedCrest, ) {
   let img = `<img src="${selectedCrest}" class="img-responsive">`;
   document.getElementById('testModel2').innerHTML = img;
 }
+//reloads page when user quits
 quit.addEventListener('click', function(e) {
   location.reload();
 });
@@ -561,10 +633,13 @@ function drop(ev, pos) {
       console.log(`this is dropped ${droppedPlayer}`);
       //gets the postion of the selected player
       let playerPos;
+      let no;
       userTeam.players.forEach(function(p){
         //when the palyer is the draged player set postition
         if (droppedPlayer === p.web_name){
           playerPos = p.getPostion();
+          no = p.position;
+          console.log(p.position);
         }
       });
       //check the postion of the drop box
@@ -778,7 +853,6 @@ function getPlayer(playerName){
     return userTeam.players[p].ict_index;
   }
 }
-
 //bootstrap tooltip for each player
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
