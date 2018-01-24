@@ -63,6 +63,6 @@ If you navigate back to your terminal you will see a message indicating a new cl
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/results.png)
 9. The updated table can then be viewed.
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/updated.png)
-10. Whit the quit button is pressed the user can cancel the quit operation, quit and delete all game data from the server or quit and use the provided game name to log back in at a later date to continue the game 
+10. When the quit button is pressed the user can cancel the quit operation, quit and delete all game data from the server or quit and use the provided game name to log back in at a later date to continue the game 
 ![alt tag](https://github.com/seanjohn85/football-manager/blob/master/quit.png)
 
